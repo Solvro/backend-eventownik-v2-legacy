@@ -2,17 +2,8 @@
   "name": "backend-eventownik",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "license": "UNLICENSED",
-  "scripts": {
-    "start": "node bin/server.js",
-    "build": "node ace build",
-    "dev": "node ace serve --hmr",
-    "test": "node ace test",
-    "lint": "eslint .",
-    "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
-  },
+  "type": "module",
   "imports": {
     "#controllers/*": "./app/controllers/*.js",
     "#exceptions/*": "./app/exceptions/*.js",
@@ -31,10 +22,31 @@
     "#tests/*": "./tests/*.js",
     "#config/*": "./config/*.js"
   },
+  "scripts": {
+    "build": "node ace build",
+    "dev": "node ace serve --hmr",
+    "format": "prettier --write .",
+    "lint": "eslint .",
+    "start": "node bin/server.js",
+    "test": "node ace test",
+    "typecheck": "tsc --noEmit"
+  },
+  "prettier": "@solvro/config/prettier",
+  "resolutions": {
+    "strtok3": "8.0.1"
+  },
+  "dependencies": {
+    "@adonisjs/auth": "^9.2.3",
+    "@adonisjs/core": "^6.14.1",
+    "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/lucid": "^21.3.0",
+    "@vinejs/vine": "^2.1.0",
+    "luxon": "^3.5.0",
+    "pg": "^8.13.1",
+    "reflect-metadata": "^0.2.2"
+  },
   "devDependencies": {
     "@adonisjs/assembler": "^7.8.2",
-    "@adonisjs/eslint-config": "^2.0.0-beta.6",
-    "@adonisjs/prettier-config": "^1.4.0",
     "@adonisjs/tsconfig": "^1.4.0",
     "@japa/api-client": "^2.0.3",
     "@japa/assert": "^3.0.0",
@@ -51,15 +63,10 @@
     "ts-node-maintained": "^10.9.4",
     "typescript": "~5.6"
   },
-  "dependencies": {
-    "@adonisjs/auth": "^9.2.3",
-    "@adonisjs/core": "^6.14.1",
-    "@adonisjs/cors": "^2.2.1",
-    "@adonisjs/lucid": "^21.3.0",
-    "@vinejs/vine": "^2.1.0",
-    "luxon": "^3.5.0",
-    "pg": "^8.13.1",
-    "reflect-metadata": "^0.2.2"
+  "pnpm": {
+    "overrides": {
+      "strtok3": "8.0.1"
+    }
   },
   "hotHook": {
     "boundaries": [
@@ -70,13 +77,7 @@
   "overrides": {
     "strtok3": "8.0.1"
   },
-  "resolutions": {
-    "strtok3": "8.0.1"
-  },
-  "pnpm": {
-    "overrides": {
-      "strtok3": "8.0.1"
-    }
-  },
-  "prettier": "@solvro/config/prettier"
+  "volta": {
+    "node": "20.18.1"
+  }
 }

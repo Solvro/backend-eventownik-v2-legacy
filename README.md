@@ -1,6 +1,7 @@
 # backend-eventownik
+
 ![Solvro banner](https://github.com/Solvro/backend-topwr-sks/blob/main/assets/solvro_dark.png#gh-dark-mode-only)
-![Solvro banner](https://github.com/Solvro/backend-topwr-sks/blob/main/assets/solvro_dark.png#gh-light-mode-only)
+![Solvro banner](https://github.com/Solvro/backend-topwr-sks/blob/main/assets/solvro_light.png#gh-light-mode-only)
 
 ## Links
 
