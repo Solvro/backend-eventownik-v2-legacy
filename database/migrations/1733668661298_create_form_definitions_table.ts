@@ -6,9 +6,10 @@ export default class extends BaseSchema {
   async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
-      table.integer('attribute_id').unsigned().references('id').inTable('attrubutes').onDelete('CASCADE')
-      table.integer('form_id').unsigned().references('id').inTable('forms').onDelete('CASCADE')
-      table.boolean('is_editable').notNullable()
+      table.integer('attribute_id').unsigned().references('attributes.id').onDelete('CASCADE')
+      table.integer('form_id').unsigned().references('forms.id').onDelete('CASCADE')
+      table.boolean('is_editable').defaultTo(false).notNullable()
+      table.timestamps()
     })
   }
 

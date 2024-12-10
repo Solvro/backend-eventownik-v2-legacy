@@ -7,8 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments("id");
 
-      table.integer("event_id").unsigned().notNullable();
-      // .references("events.id");
+      table.integer("event_id").unsigned().references("events.id").notNullable();
       table
         .integer("permission_id")
         .unsigned()
@@ -20,8 +19,7 @@ export default class extends BaseSchema {
         .notNullable()
         .references("admins.id");
 
-      table.timestamp("created_at");
-      table.timestamp("updated_at");
+      table.timestamps();
     });
   }
 

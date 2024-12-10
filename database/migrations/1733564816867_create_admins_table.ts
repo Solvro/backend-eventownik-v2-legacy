@@ -11,15 +11,21 @@ export default class extends BaseSchema {
       table.text("last_name").notNullable();
       table.text("password").notNullable();
       table.text("email").notNullable().unique();
-      table.text("type").notNullable();
-      table.boolean("active").notNullable();
+      table
+        .enum("type", ["organizer", "superadmin"], {
+          useNative: true,
+          enumName: "admin_type",
+          existingType: false,
+        })
+        .notNullable();
+      table.boolean("active").notNullable().defaultTo(true);
 
-      table.timestamp("created_at");
-      table.timestamp("updated_at");
+      table.timestamps();
     });
   }
 
   async down() {
     this.schema.dropTable(this.tableName);
+    this.schema.raw('DROP TYPE IF EXISTS "admin_type"');
   }
 }
