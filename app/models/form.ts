@@ -18,7 +18,7 @@ export default class Form extends BaseModel {
   @column()
   declare name: string;
 
-  @column.dateTime({ autoCreate: true })
+  @column.dateTime()
   declare startDate: DateTime;
 
   @column.dateTime()
