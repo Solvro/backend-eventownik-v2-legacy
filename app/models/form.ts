@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
+// import type { HasMany } from '@adonisjs/lucid/types/relations'
 import { BaseModel, column, belongsTo, BelongsTo } from '@adonisjs/lucid/orm';
 // import Event from './event.ts';
+// import Event FormDefinition './formDefinition.ts';
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })
@@ -32,4 +34,10 @@ export default class Form extends BaseModel {
 
   // @belongsTo(() => Event)
   // declare event: BelongsTo<typeof Event>;
+
+  // @hasMany(() => Event)
+  // declare events: HasMany<typeof Event>
+
+  // @hasMany(() => FormDefinition)
+  // declare formDefinitions: HasMany<typeof FormDefinition>
 }
