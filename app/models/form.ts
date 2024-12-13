@@ -31,5 +31,5 @@ export default class Form extends BaseModel {
   declare updatedAt: DateTime;
 
   // @belongsTo(() => Event)
-  // public event: BelongsTo<typeof Event>;
+  // declare event: BelongsTo<typeof Event>;
 }
