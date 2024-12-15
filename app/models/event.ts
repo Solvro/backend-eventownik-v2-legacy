@@ -1,5 +1,9 @@
-import { DateTime } from 'luxon';
-import { BaseModel, column, belongsTo, BelongsTo } from '@adonisjs/lucid/orm';
+import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
+import { DateTime } from "luxon";
+
+import Participant from "./participant.js";
+
 // import Admin from './Admin.ts';
 // import Form from './Form.ts';
 
@@ -46,16 +50,12 @@ export default class Event extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  /*
-  @belongsTo(() => Admin, {
-    foreignKey: 'organizerId',
-  })
-  public organizer: BelongsTo<typeof Admin>;
+  // @belongsTo(() => Admin)
+  // public organizer: BelongsTo<typeof Admin>;
 
-  @belongsTo(() => Form, {
-    foreignKey: 'firstFormId',
-  })
-  public firstForm: BelongsTo<typeof Form>;
+  // @belongsTo(() => Form)
+  // public firstForm: BelongsTo<typeof Form>;
 
-  */
+  @hasMany(() => Participant)
+  declare participants: HasMany<typeof Participant>;
 }
