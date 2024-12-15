@@ -1,12 +1,13 @@
-import { BaseModel, column } from "@adonisjs/lucid/orm";
+import { BaseModel, column, hasMany, hasOne } from "@adonisjs/lucid/orm";
+import type { HasMany, HasOne } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
 
 export default class Block extends BaseModel {
   @column({ isPrimary: true })
   declare id: number;
 
-  // @hasOne(() => Attribute)
-  // declare id: HasOne<typeof Attribute>;
+  // @belongsTo(() => Attribute)
+  // declare attribute: HasOne<typeof Attribute>;
 
   @column()
   declare name: string;
@@ -15,10 +16,13 @@ export default class Block extends BaseModel {
   declare description: string | null;
 
   @column()
-  declare parent_id: number | null;
+  declare parentId: number | null;
 
-  // @hasOne(() => Block)
-  // declare parent_id: HasOne<typeof Block>;
+  @hasOne(() => Block)
+  declare parent: HasOne<typeof Block>;
+
+  @hasMany(() => Block)
+  declare children: HasMany<typeof Block>;
 
   @column()
   declare capacity: number | null;
