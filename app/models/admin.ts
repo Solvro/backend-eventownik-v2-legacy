@@ -1,5 +1,8 @@
-import { BaseModel, column } from "@adonisjs/lucid/orm";
+import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
+import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
+
+import Permission from "./permission.js";
 
 export default class Admin extends BaseModel {
   @column({ isPrimary: true })
@@ -22,6 +25,12 @@ export default class Admin extends BaseModel {
 
   @column()
   declare active: boolean;
+
+  @manyToMany(() => Permission, {
+    pivotTable: "admin_permissions",
+    pivotColumns: ["eventId"],
+  })
+  declare permissions: ManyToMany<typeof Permission>;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
