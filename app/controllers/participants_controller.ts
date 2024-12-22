@@ -20,13 +20,6 @@ export default class ParticipantsController {
 }
 
   /**
-   * Display form to create a new record
-   */
-  async create({}: HttpContext) {
-    
-  }
-
-  /**
    * Handle form submission for the create action
    */
 
@@ -52,7 +45,18 @@ export default class ParticipantsController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) {}
+  async show({ params, response }: HttpContext) {
+    try {
+      const participant = await Participant.find(params.id)
+      if (!participant) {
+        return response.status(404).send({message: `Participant with ID ${params.id} was not found`})
+      }
+      return response.status(200).send(participant)
+    } catch (error) {
+      console.error(error)
+      return response.status(500).send({message: 'Internal server error'})
+  }
+}
 
   /**
    * Edit individual record
@@ -60,12 +64,19 @@ export default class ParticipantsController {
   async edit({ params }: HttpContext) {}
 
   /**
-   * Handle form submission for the edit action
-   */
-  // async update({ params, request }: HttpContext) {}
-
-  /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) {}
+  async destroy({ params, response }: HttpContext) {
+    try {
+      const participant = await Participant.find(params.id)
+      if (!participant) {
+        return response.status(404).send({message: `Participant with ID ${params.id} was not found`})
+      }
+      await participant.delete()
+      return response.status(200).send({message: `Participant with ID ${params.id} was deleted`})
+    } catch (error) {
+      console.error(error)
+      return response.status(500).send({message: 'Internal server error'})
+    }
+  }
 }
