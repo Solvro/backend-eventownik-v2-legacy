@@ -61,7 +61,23 @@ export default class ParticipantsController {
   /**
    * Edit individual record
    */
-  async edit({ params }: HttpContext) {}
+  async edit({ params, request, response }: HttpContext) {
+    try {
+      const participant = await Participant.find(params.id)
+      if (!participant) {
+        return response.status(404).send({message: `Participant with ID ${params.id} was not found`})
+      }
+      const data = request.only(['email', 'eventId', 'firstName', 'lastName'])
+      participant.merge(data)
+      await participant.save()
+      return response.status(200).send(participant)
+    }
+    catch (error) {
+      console.error(error)
+      return response.status(500).send({message: 'Internal server error'})
+    }
+
+  }
 
   /**
    * Delete record
