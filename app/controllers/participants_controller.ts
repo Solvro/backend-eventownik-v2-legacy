@@ -1,7 +1,5 @@
 import { HttpContext } from '@adonisjs/core/http'
 import Participant from '#models/participant'
-import { http } from '#config/app'
-
 
 export default class ParticipantsController {
   /**
@@ -25,13 +23,31 @@ export default class ParticipantsController {
    * Display form to create a new record
    */
   async create({}: HttpContext) {
-
+    
   }
 
   /**
    * Handle form submission for the create action
    */
-  async store({ request }: HttpContext) {}
+
+  async store({ request, response }: HttpContext) {
+    // Walidacja danych, do wrzucenia jako middleware
+    if (request.input('email') == null || request.input('eventId') == null || request.input('firstName') == null || request.input('lastName') == null) {
+      console.log('Invalid request')
+      return response.status(400).send({message: 'Invalid request'})
+    }  
+    // Zapisanie danych do bazy
+    try {
+      const data = request.only(['email', 'eventId', 'firstName', 'lastName'])
+      const participant = await Participant.create(data)
+      return response.status(201).send(participant)
+    // Błąd niewynikający z błędu użytkownika
+    }catch (error) {
+      console.error(error)
+      return response.status(500).send({message: 'Internal server error'})
+  }
+
+  }
 
   /**
    * Show individual record
@@ -46,7 +62,7 @@ export default class ParticipantsController {
   /**
    * Handle form submission for the edit action
    */
-  async update({ params, request }: HttpContext) {}
+  // async update({ params, request }: HttpContext) {}
 
   /**
    * Delete record
