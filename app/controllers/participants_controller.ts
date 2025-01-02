@@ -35,7 +35,7 @@ export default class ParticipantsController {
   /**
    * Edit individual record
    */
-  async edit({ params, request }: HttpContext) {
+  async update({ params, request }: HttpContext) {
     const data = await participantsUpdateValidator.validate(request.all());
     const participant = await Participant.findOrFail(params.id);
     participant.merge(data);
