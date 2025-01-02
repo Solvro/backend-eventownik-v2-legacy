@@ -1,8 +1,8 @@
-import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
-import type { BelongsTo } from "@adonisjs/lucid/types/relations";
+import { BaseModel, column, belongsTo, manyToMany } from "@adonisjs/lucid/orm";
+import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
-import Event from '#models/event'
-// import ParticipantAttribute from 'App/Models/participantAttribute.ts'
+import Event from "#models/event";
+import Email from "#models/email";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })
@@ -31,4 +31,10 @@ export default class Participant extends BaseModel {
 
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
+
+  @manyToMany(() => Email, {
+    pivotTable: "participant_emails",
+    pivotColumns: ["send_at", "send_by", "status"],
+  })
+  declare emails: ManyToMany<typeof Email>;
 }
