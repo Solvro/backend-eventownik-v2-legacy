@@ -16,6 +16,7 @@ export default class Permission extends BaseModel {
   @manyToMany(() => Admin, {
     pivotTable: "admin_permissions",
     pivotColumns: ["eventId"],
+    pivotTimestamps: true,
   })
   declare admins: ManyToMany<typeof Admin>;
 }
