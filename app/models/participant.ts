@@ -1,4 +1,4 @@
-import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import { BaseModel, belongsTo, column, /*hasMany*/ } from "@adonisjs/lucid/orm";
 import type { BelongsTo } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
 import Event from '#models/event'
