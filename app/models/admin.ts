@@ -31,6 +31,7 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   declare email: string;
 
   @column()
+  // @enum(organizer, superadmin)
   declare type: "organizer" | "superadmin";
 
   @column()
