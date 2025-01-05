@@ -2,10 +2,19 @@ import Event from "#models/event";
 import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
-
+import { compose } from '@adonisjs/core/helpers'
 import Permission from "./permission.js";
+import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+import hash from '@adonisjs/core/services/hash'
+import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 
-export default class Admin extends BaseModel {
+
+const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
+  uids: ['email'],
+  passwordColumnName: 'password',
+})
+
+export default class Admin extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
   declare id: number;
 
@@ -15,7 +24,7 @@ export default class Admin extends BaseModel {
   @column()
   declare lastName: string;
 
-  @column()
+  @column({ serializeAs: null })
   declare password: string;
 
   @column()
@@ -46,4 +55,6 @@ export default class Admin extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  static accessTokens = DbAccessTokensProvider.forModel(Admin)
 }
