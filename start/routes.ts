@@ -7,6 +7,7 @@ import { middleware } from "./kernel.js";
 const ParticipantsController = () =>
   import("#controllers/participants_controller");
 const AuthController = () => import("#controllers/auth_controller");
+const AdminsController = () => import("#controllers/admins_controller");
 
 router.get("/swagger", async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger);
@@ -18,6 +19,7 @@ router.get("/docs", async () => {
 router
   .group(() => {
     router.resource("participants", ParticipantsController).apiOnly();
+    router.resource("admins", AdminsController);
 
     router
       .group(() => {
