@@ -7,15 +7,9 @@
 |
 */
 import router from "@adonisjs/core/services/router";
-const EventController  = () => import ("../app/controllers/event_contoller.js");
+const EventController  = () => import ("#controllers/events_controller");
 
-router.group(() => {
-  router.get("/", [EventController, "index"]);
-  router.post("/", [EventController, "store"]);
-  router.get("/:id", [EventController, "show"]);
-  router.put("/:id",  [EventController, "update"]);
-  router.delete("/:id", [EventController, "destroy"]);
-}).prefix("api/v1/events");
+router.resource("events", EventController);
 
 
 router.get("/", async () => {
