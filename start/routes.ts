@@ -1,9 +1,9 @@
 import swagger from "#config/swagger";
 import router from "@adonisjs/core/services/router";
 import AutoSwagger from "adonis-autoswagger";
-
 import { middleware } from "./kernel.js";
 
+const EventController  = () => import ("#controllers/events_controller");
 const ParticipantsController = () =>
   import("#controllers/participants_controller");
 const AuthController = () => import("#controllers/auth_controller");
@@ -23,6 +23,8 @@ router
     router.resource("participants", ParticipantsController).apiOnly();
     router.resource("permissions", PermissionsController);
     router.resource("admins", AdminsController);
+    router.resource("events", EventController);
+
 
     router
       .group(() => {
