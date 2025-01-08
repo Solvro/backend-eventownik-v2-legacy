@@ -1,5 +1,5 @@
-import { BaseModel, column, hasMany, hasOne } from "@adonisjs/lucid/orm";
-import type { HasMany, HasOne } from "@adonisjs/lucid/types/relations";
+import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
 
 export default class Block extends BaseModel {
@@ -18,10 +18,14 @@ export default class Block extends BaseModel {
   @column()
   declare parentId: number | null;
 
-  @hasOne(() => Block)
-  declare parent: HasOne<typeof Block>;
+  @belongsTo(() => Block, {
+    foreignKey: "parentId",
+  })
+  declare parent: BelongsTo<typeof Block>;
 
-  @hasMany(() => Block)
+  @hasMany(() => Block, {
+    foreignKey: "parentId",
+  })
   declare children: HasMany<typeof Block>;
 
   @column()

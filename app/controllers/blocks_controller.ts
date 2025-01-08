@@ -4,14 +4,19 @@ import type { HttpContext } from "@adonisjs/core/http";
 
 export default class BlocksController {
   async index({ request }: HttpContext) {
-    return Block.query().paginate(
+    return await Block.query().paginate(
       request.input("page", 1) | 1,
       request.input("perPage", 10) | 10,
     );
   }
 
   async show({ params }: HttpContext) {
-    return await Block.findOrFail(params.id);
+    const block = await Block.findOrFail(params.id);
+
+    await block.load("parent");
+    await block.load("children");
+
+    return block;
   }
 
   async store({ request }: HttpContext) {

@@ -7,8 +7,13 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments("id");
       table.string("name", 255);
-      table.text("description",'long').nullable();
-      table.integer("parent_id").unsigned().references("blocks.id").nullable();
+      table.text("description", "long").nullable();
+      table
+        .integer("parent_id")
+        .unsigned()
+        .references("blocks.id")
+        .onDelete("CASCADE")
+        .nullable();
       table.integer("capacity").nullable();
       table.timestamps();
     });
