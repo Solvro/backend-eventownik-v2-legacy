@@ -11,13 +11,39 @@
 | templates.
 |
 */
-
-import { Bouncer } from '@adonisjs/bouncer'
+import Admin from "#models/admin";
+import Event from "#models/event";
+import Permission from "#models/permission";
+import { Bouncer } from "@adonisjs/bouncer";
+import { BouncerAbility } from "@adonisjs/bouncer/types";
 
 /**
  * Delete the following ability to start from
  * scratch
  */
-export const editUser = Bouncer.ability(() => {
-  return true
-})
+
+const availablePermissions = await Permission.all();
+const abilities: Record<string, BouncerAbility<Admin>> = {};
+for (const availablePermission of availablePermissions) {
+  abilities[`${availablePermission.action}_${availablePermission.subject}`] =
+    Bouncer.ability(async (admin: Admin, event: Event) => {
+      if (admin.type === "superadmin") {
+        return true;
+      }
+
+      if (admin.id === event.organizerId) {
+        return true;
+      }
+
+      const result = await admin
+        .related("permissions")
+        .query()
+        .where("event_id", event.id)
+        .where("permission_id", availablePermission.id)
+        .first();
+
+      return Boolean(result);
+    });
+}
+
+export default abilities;
