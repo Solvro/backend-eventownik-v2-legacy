@@ -1,8 +1,9 @@
-import { BaseModel, /*belongsTo,*/ column, hasMany } from "@adonisjs/lucid/orm";
+import { afterCreate, BaseModel, /*belongsTo,*/ column, hasMany } from "@adonisjs/lucid/orm";
 import type { /*BelongsTo,*/ HasMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
 
 import Participant from "./participant.js";
+import string from "@adonisjs/core/helpers/string";
 
 // import Admin from './Admin.ts';
 // import Form from './Form.ts';
@@ -58,4 +59,12 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Participant)
   declare participants: HasMany<typeof Participant>;
+
+  @afterCreate()
+  public static async generateSlug(event: Event) {
+    if (event.name) {
+      event.slug = string.slug(`${event.name}-${event.id}`);
+      await event.save();
+    }
+  }
 }

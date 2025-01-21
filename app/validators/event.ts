@@ -14,7 +14,7 @@ export const createEventValidator = vine.compile(
     //organizerId: vine.number(),
     name: vine.string().maxLength(255),
     description: vine.string().nullable().optional(),
-    slug: vine.string(),
+    //slug: vine.string(),
     startDate: vine.date().transform(DateTimeTransform),
     endDate: vine.date().transform(DateTimeTransform),
     //firstFormId: vine.number().nullable().optional(),
@@ -22,15 +22,13 @@ export const createEventValidator = vine.compile(
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
     secondaryColor: vine.string().nullable().optional(),
-  }),
+  })
 );
 
 export const updateEventValidator = vine.compile(
   vine.object({
-    //organizerId: vine.number().optional(),
     name: vine.string().maxLength(255).optional(),
     description: vine.string().nullable().optional(),
-    slug: vine.string().optional(),
     startDate: vine.date().transform(DateTimeTransform).optional(),
     endDate: vine.date().transform(DateTimeTransform).optional(),
     //firstFormId: vine.number().nullable().optional(),
@@ -38,5 +36,14 @@ export const updateEventValidator = vine.compile(
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
     secondaryColor: vine.string().nullable().optional(),
+  })
+);
+
+export const createEventLimitedValidator = vine.compile(
+  vine.object({
+    //organizerId: vine.number().optional(),
+    name: vine.string().maxLength(255),
+    startDate: vine.date().transform(DateTimeTransform),
+    endDate: vine.date().transform(DateTimeTransform),
   }),
 );
