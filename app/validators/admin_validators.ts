@@ -14,6 +14,14 @@ export const createAdminValidator = vine.compile(
       ),
     type: vine.enum(["organizer", "superadmin"]),
     active: vine.boolean().optional(),
+    permissions: vine
+      .array(
+        vine.object({
+          permissionId: vine.number(),
+          eventId: vine.number(),
+        }),
+      )
+      .optional(),
   }),
 );
 
