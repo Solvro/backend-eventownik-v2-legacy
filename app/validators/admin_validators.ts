@@ -40,5 +40,13 @@ export const updateAdminValidator = vine.compile(
       .optional(),
     type: vine.enum(["organizer", "superadmin"]).optional(),
     active: vine.boolean().optional(),
+    permissions: vine
+      .array(
+        vine.object({
+          permissionId: vine.number(),
+          eventId: vine.number(),
+        }),
+      )
+      .optional(),
   }),
 );
