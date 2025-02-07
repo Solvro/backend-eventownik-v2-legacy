@@ -21,6 +21,12 @@ export default class AdminsController {
 
     const newAdmin = await Admin.create({ ...newAdminData });
 
+    newAdminData.permissions?.forEach(async (adminPermission) => {
+      await newAdmin.related("permissions").attach({
+        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
+      });
+    });
+
     return response
       .header("Location", `/api/v1/admins/${newAdmin.id}`)
       .created();
