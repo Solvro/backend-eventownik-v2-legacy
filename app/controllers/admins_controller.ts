@@ -48,6 +48,12 @@ export default class AdminsController {
     const admin = await Admin.findOrFail(params.id);
     admin.merge(adminUpdates);
 
+    adminUpdates.permissions?.forEach(async (adminPermission) => {
+      await admin.related("permissions").attach({
+        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
+      });
+    });
+
     return await admin.save();
   }
 
