@@ -10,7 +10,7 @@ export default class AdminsController {
    * Display a list of resource
    */
   async index() {
-    return await Admin.all();
+    return await Admin.query().preload("events").preload("permissions");
   }
 
   /**
@@ -36,7 +36,11 @@ export default class AdminsController {
    * Show individual record
    */
   async show({ params }: HttpContext) {
-    return Admin.findOrFail(params.id);
+    return await Admin.query()
+      .where("id", +params.id)
+      .preload("events")
+      .preload("permissions")
+      .first();
   }
 
   /**
