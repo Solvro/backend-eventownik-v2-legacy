@@ -1,9 +1,8 @@
-import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, BelongsTo, manyToMany } from '@adonisjs/lucid/orm';
-import Event from '#models/event';
-import Attribute from '#models/attribute';
-import type { ManyToMany } from '@adonisjs/lucid/types/relations';
-
+// import Attribute from "#models/attribute";
+import Event from "#models/event";
+import { BaseModel, belongsTo, column } from "@adonisjs/lucid/orm";
+import type { BelongsTo } from "@adonisjs/lucid/types/relations";
+import { DateTime } from "luxon";
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })
@@ -36,6 +35,6 @@ export default class Form extends BaseModel {
   @belongsTo(() => Event)
   declare event: BelongsTo<typeof Event>;
 
-  @manyToMany(() => Attribute)
-  declare attributes: ManyToMany<typeof Attribute>
+  // @manyToMany(() => Attribute)
+  // declare attributes: ManyToMany<typeof Attribute>;
 }

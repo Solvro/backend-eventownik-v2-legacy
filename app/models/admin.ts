@@ -1,18 +1,18 @@
 import Event from "#models/event";
+import { DbAccessTokensProvider } from "@adonisjs/auth/access_tokens";
+import { withAuthFinder } from "@adonisjs/auth/mixins/lucid";
+import { compose } from "@adonisjs/core/helpers";
+import hash from "@adonisjs/core/services/hash";
 import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
-import { compose } from '@adonisjs/core/helpers'
+
 import Permission from "./permission.js";
-import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
-import hash from '@adonisjs/core/services/hash'
-import { DbAccessTokensProvider } from '@adonisjs/auth/access_tokens'
 
-
-const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
-  uids: ['email'],
-  passwordColumnName: 'password',
-})
+const AuthFinder = withAuthFinder(() => hash.use("scrypt"), {
+  uids: ["email"],
+  passwordColumnName: "password",
+});
 
 export default class Admin extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
@@ -57,5 +57,5 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  static accessTokens = DbAccessTokensProvider.forModel(Admin)
+  static accessTokens = DbAccessTokensProvider.forModel(Admin);
 }

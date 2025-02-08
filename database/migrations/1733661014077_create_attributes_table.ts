@@ -45,7 +45,6 @@ export default class extends BaseSchema {
 
   async down() {
     this.schema.dropTable(this.tableName);
-    this.schema.raw('DROP TYPE IF EXISTS "attribute_type"')
-
+    this.schema.raw('DROP TYPE IF EXISTS "attribute_type"');
   }
 }

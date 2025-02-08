@@ -5,7 +5,7 @@ export default class extends BaseSchema {
 
   async up() {
     this.schema.alterTable(this.tableName, (table) => {
-      table.foreign("event_id").references("events.id").onDelete('CASCADE');
+      table.foreign("event_id").references("events.id").onDelete("CASCADE");
     });
   }
 

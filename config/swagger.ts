@@ -1,10 +1,11 @@
 // for AdonisJS v6
 import path from "node:path";
 import url from "node:url";
+
 // ---
 
 export default {
-  path: path.dirname(url.fileURLToPath(import.meta.url)) + "/../",
+  path: `${path.dirname(url.fileURLToPath(import.meta.url))}/../`,
   tagIndex: 2,
   info: {
     title: "Eventownik backend",

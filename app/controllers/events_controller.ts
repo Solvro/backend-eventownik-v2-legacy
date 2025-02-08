@@ -1,10 +1,9 @@
 import Event from "#models/event";
-import type { HttpContext } from "@adonisjs/core/http";
 import { createEventValidator, updateEventValidator } from "#validators/event";
+import type { HttpContext } from "@adonisjs/core/http";
 
 export default class EventController {
-
-  public async index({ request }: HttpContext ) {
+  public async index({ request }: HttpContext) {
     const page = Number(request.input("page", 1));
     const perPage = Number(request.input("perPage", 10));
 
@@ -19,8 +18,10 @@ export default class EventController {
 
   public async show({ params }: HttpContext) {
     const eventId = Number(params.id);
-    return await Event.query().preload("participants").where("id", eventId).firstOrFail();
-
+    return await Event.query()
+      .preload("participants")
+      .where("id", eventId)
+      .firstOrFail();
   }
 
   public async update({ params, request, response }: HttpContext) {
@@ -31,7 +32,7 @@ export default class EventController {
     return response.ok({ message: "Event updated successfully" });
   }
 
-  public async destroy({ response,params }: HttpContext) {
+  public async destroy({ response, params }: HttpContext) {
     const event = await Event.findOrFail(params.id);
     await event.delete();
     return response.noContent();

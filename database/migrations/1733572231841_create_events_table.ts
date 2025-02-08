@@ -25,7 +25,7 @@ export default class EventsSchema extends BaseSchema {
       table.float("long").nullable();
       table.string("primary_color", 12);
       table.string("secondary_color", 12);
-      table.timestamps()
+      table.timestamps();
     });
   }
 
