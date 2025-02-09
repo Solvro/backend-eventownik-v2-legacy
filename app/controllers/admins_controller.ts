@@ -19,7 +19,7 @@ export default class AdminsController {
   async store({ request, response }: HttpContext) {
     const newAdminData = await createAdminValidator.validate(request.body());
 
-    const newAdmin = await Admin.create({ ...newAdminData });
+    const newAdmin = await Admin.create(newAdminData);
 
     newAdminData.permissions?.forEach(async (adminPermission) => {
       await newAdmin.related("permissions").attach({
