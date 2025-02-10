@@ -6,7 +6,7 @@ info:
 components:
   responses:
     Forbidden:
-      description: "Access token is missing or invalid"
+      description: "Access token is missing or invalid."
     Accepted:
       description: "The request was accepted"
     Created:
