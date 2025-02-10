@@ -50,6 +50,11 @@ export default class AdminsController {
     const adminUpdates = await updateAdminValidator.validate(request.body());
 
     const admin = await Admin.findOrFail(params.id);
+
+    if (!adminUpdates) {
+      return admin;
+    }
+
     admin.merge(adminUpdates);
 
     adminUpdates.permissions?.forEach(async (adminPermission) => {
