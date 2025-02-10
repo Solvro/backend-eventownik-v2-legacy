@@ -12,7 +12,7 @@ export default class OrganizersController {
   /**
    * @index
    * @operationId getEventOrganizers
-   * @description Return an array of organizers of specified event
+   * @description Returns an array of organizers of specified event
    * @tag organizers
    * @responseBody 200 - <Admin[]>
    */
@@ -27,7 +27,7 @@ export default class OrganizersController {
   /**
    * @store
    * @operationId addEventOrganizer
-   * @description Add an admin as an event organizer
+   * @description Adds an admin as an event organizer
    * @requestBody <addOrganizerValidator>
    * @tag organizers
    */
@@ -37,5 +37,28 @@ export default class OrganizersController {
     const organizerData = await addOrganizerValidator.validate(request.all());
 
     await this.organizerService.addOrganizer(eventId, organizerData);
+  }
+
+  /**
+   * @show
+   * @operationId getEventOrganizer
+   * @description Returns organizer details
+   * @tag organizers
+   * @responseBody 200 - <Admin>
+   * @responseBody 404 - { error: `Organizer with id {organizerId} does not exist` },
+   */
+  async show({ params }: HttpContext) {
+    const eventId = +params.eventId;
+    const organizerId = +params.id;
+
+    const organizer = await Admin.query()
+      .where("id", organizerId)
+      .whereHas("events", (query) => query.where("events.id", eventId))
+      .preload("permissions", (permissionsQuery) =>
+        permissionsQuery.where("event_id", eventId),
+      )
+      .firstOrFail();
+
+    return organizer;
   }
 }
