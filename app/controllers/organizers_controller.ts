@@ -23,7 +23,10 @@ export default class OrganizersController {
     const eventId = +context.params.eventId;
 
     return await Admin.query()
-      .select("firstName", "lastName", "email")
+      .select("id", "firstName", "lastName", "email")
+      .preload("permissions", (permissionsQuery) =>
+        permissionsQuery.where("event_id", eventId),
+      )
       .whereHas("events", (query) => query.where("events.id", eventId));
   }
 
@@ -31,8 +34,8 @@ export default class OrganizersController {
    * @store
    * @operationId addEventOrganizer
    * @description Adds an admin as an event organizer
-   * @requestBody <addOrganizerValidator>
    * @tag organizers
+   * @requestBody <addOrganizerValidator>
    */
   async store({ params, request }: HttpContext) {
     const eventId = +params.eventId;
