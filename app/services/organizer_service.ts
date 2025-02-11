@@ -67,4 +67,15 @@ export class OrganizerService {
 
     return updatedOrganizer;
   }
+
+  async removeOrganizer(organizerId: number, eventId: number) {
+    const organizer = await this.getOrganizerWithPermissions(
+      organizerId,
+      eventId,
+    );
+
+    await organizer
+      .related("permissions")
+      .detach(organizer.permissions.map((permission) => permission.id));
+  }
 }
