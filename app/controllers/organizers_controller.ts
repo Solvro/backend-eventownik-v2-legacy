@@ -1,6 +1,9 @@
 import Admin from "#models/admin";
 import { OrganizerService } from "#services/organizer_service";
-import { addOrganizerValidator } from "#validators/organizer";
+import {
+  addOrganizerValidator,
+  updateOrganizerPermissionsValidator,
+} from "#validators/organizer";
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
@@ -60,5 +63,30 @@ export default class OrganizersController {
       .firstOrFail();
 
     return organizer;
+  }
+
+  /**
+   * @update
+   * @operationId updateOrganizerPermissions
+   * @description Changes organizer's permissions to the ones specified in the request body
+   * @tag organizers
+   * @responseBody 200 - <Admin>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
+   */
+  async update({ params, request }: HttpContext) {
+    const eventId = +params.eventId;
+    const organizerId = +params.id;
+
+    const permissionsIds = await updateOrganizerPermissionsValidator.validate(
+      request.body(),
+    );
+
+    const updatedOrganizer = this.organizerService.updateOrganizerPermissions(
+      organizerId,
+      eventId,
+      permissionsIds,
+    );
+
+    return updatedOrganizer;
   }
 }
