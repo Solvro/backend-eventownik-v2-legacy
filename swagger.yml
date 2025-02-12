@@ -1,0 +1,1442 @@
+openapi: "3.0.0"
+info:
+  title: "Eventownik backend"
+  version: "0.5.0"
+  description: "Eventownik backend API documentation"
+components:
+  responses:
+    Forbidden:
+      description: "Access token is missing or invalid."
+    Accepted:
+      description: "The request was accepted"
+    Created:
+      description: "The resource has been created"
+    NotFound:
+      description: "The resource has been created"
+    NotAcceptable:
+      description: "The resource has been created"
+  securitySchemes:
+    BearerAuth:
+      type: "http"
+      scheme: "bearer"
+    BasicAuth:
+      type: "http"
+      scheme: "basic"
+    ApiKeyAuth:
+      type: "apiKey"
+      in: "header"
+      name: "X-API-Key"
+  schemas:
+    Any:
+      description: "Any JSON object not defined as schema"
+    Admin:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 430
+        firstName:
+          type: "string"
+          example: "John"
+        lastName:
+          type: "string"
+          example: "Doe"
+        email:
+          type: "string"
+          example: "johndoe@example.com"
+          format: "email"
+        type:
+          $ref: "#/components/schemas/\"organizer\""
+          example: "organizer"
+          enum:
+            - "organizer"
+            - "superadmin"
+        active:
+          type: "boolean"
+          example: true
+        permissions:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Permission"
+            example: null
+        events:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Event"
+            example: null
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Admin (Model)"
+    Block:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 808
+        name:
+          type: "string"
+          example: "John Doe"
+        description:
+          type: "string"
+          example: "Lorem ipsum dolor sit amet"
+        parentId:
+          type: "number"
+          example: 973
+        parent:
+          $ref: "#/components/schemas/Block"
+          example: null
+        children:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Block"
+            example: null
+        capacity:
+          type: "number"
+          example: 23
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+      description: "Block (Model)"
+    Email:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 313
+        eventId:
+          type: "number"
+          example: 553
+        name:
+          type: "string"
+          example: "John Doe"
+        content:
+          type: "string"
+          example: "Lorem Ipsum"
+        trigger:
+          type: "string"
+          example: "Lorem Ipsum"
+        triggerValue:
+          type: "string"
+          example: "Lorem Ipsum"
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        event:
+          $ref: "#/components/schemas/Event"
+          example: null
+        participants:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Participant"
+            example: null
+      description: "Email (Model)"
+    Event:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 331
+        organizerId:
+          type: "number"
+          example: 823
+        name:
+          type: "string"
+          example: "John Doe"
+        description:
+          type: "string"
+          example: "Lorem ipsum dolor sit amet"
+        slug:
+          type: "string"
+          example: "Lorem Ipsum"
+        startDate:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        endDate:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        firstFormId:
+          type: "number"
+          example: 283
+        lat:
+          type: "number"
+          example: 41.705
+        long:
+          type: "number"
+          example: -87.475
+        primaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+        secondaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        participants:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Participant"
+            example: null
+      description: "Event (Model)"
+    Form:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 234
+        eventId:
+          type: "number"
+          example: 828
+        isOpen:
+          type: "boolean"
+          example: true
+        description:
+          type: "string"
+          example: "Lorem ipsum dolor sit amet"
+        name:
+          type: "string"
+          example: "John Doe"
+        startDate:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        endDate:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        event:
+          $ref: "#/components/schemas/Event"
+          example: null
+      description: "Form (Model)"
+    Participant:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 265
+        email:
+          type: "string"
+          example: "johndoe@example.com"
+          format: "email"
+        eventId:
+          type: "number"
+          example: 308
+        firstName:
+          type: "string"
+          example: "John"
+        lastName:
+          type: "string"
+          example: "Doe"
+        createdAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        updatedAt:
+          type: "string"
+          example: "2021-03-23T16:13:08.489+01:00"
+          format: "date-time"
+        event:
+          $ref: "#/components/schemas/Event"
+          example: null
+        emails:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Email"
+            example: null
+      description: "Participant (Model)"
+    Permission:
+      type: "object"
+      required: []
+      properties:
+        id:
+          type: "number"
+          example: 211
+        action:
+          type: "string"
+          example: "Lorem Ipsum"
+        subject:
+          type: "string"
+          example: "Lorem Ipsum"
+        admins:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Admin"
+            example: null
+      description: "Permission (Model)"
+    PaginationMeta:
+      type: "object"
+      properties:
+        total:
+          type: "number"
+          example: 100
+          nullable: false
+        page:
+          type: "number"
+          example: 2
+          nullable: false
+        perPage:
+          type: "number"
+          example: 10
+          nullable: false
+        currentPage:
+          type: "number"
+          example: 3
+          nullable: false
+        lastPage:
+          type: "number"
+          example: 10
+          nullable: false
+        firstPage:
+          type: "number"
+          example: 1
+          nullable: false
+        lastPageUrl:
+          type: "string"
+          example: "/?page=10"
+          nullable: false
+        firstPageUrl:
+          type: "string"
+          example: "/?page=1"
+          nullable: false
+        nextPageUrl:
+          type: "string"
+          example: "/?page=6"
+          nullable: false
+        previousPageUrl:
+          type: "string"
+          example: "/?page=5"
+          nullable: false
+    createAdminValidator:
+      type: "object"
+      properties:
+        firstName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        lastName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        type:
+          type: "number"
+          example: 32
+          choices:
+            - "organizer"
+            - "superadmin"
+          required: true
+        active:
+          type: "boolean"
+          example: true
+        permissions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              permissionId:
+                type: "number"
+                example: 275
+                required: true
+              eventId:
+                type: "number"
+                example: 187
+                required: true
+      example:
+        firstName: "Lorem Ipsum"
+        lastName: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        type: 32
+        active: true
+        permissions:
+          - permissionId: 275
+            eventId: 187
+      description: "createAdminValidator (Validator)"
+    updateAdminValidator:
+      type: "object"
+      properties:
+        firstName:
+          type: "string"
+          example: "Lorem Ipsum"
+        lastName:
+          type: "string"
+          example: "Lorem Ipsum"
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+        type:
+          type: "number"
+          example: 266
+          choices:
+            - "organizer"
+            - "superadmin"
+        active:
+          type: "boolean"
+          example: true
+        permissions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              permissionId:
+                type: "number"
+                example: 346
+                required: true
+              eventId:
+                type: "number"
+                example: 782
+                required: true
+      example:
+        firstName: "Lorem Ipsum"
+        lastName: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+        email: "Lorem Ipsum"
+        type: 266
+        active: true
+        permissions:
+          - permissionId: 346
+            eventId: 782
+      description: "updateAdminValidator (Validator)"
+    loginValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        rememberMe:
+          type: "boolean"
+          example: true
+      example:
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+        rememberMe: true
+      description: "loginValidator (Validator)"
+    registerAdminValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        password:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          minLength: 8
+        firstName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        lastName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        email: "Lorem Ipsum"
+        password: "Lorem Ipsum"
+        firstName: "Lorem Ipsum"
+        lastName: "Lorem Ipsum"
+      description: "registerAdminValidator (Validator)"
+    createBlockValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        description:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        parentId:
+          type: "number"
+          example: 451
+          required: true
+        capacity:
+          type: "number"
+          example: 1
+          minimum: 1
+          required: true
+      example:
+        name: "Lorem Ipsum"
+        description: "Lorem Ipsum"
+        parentId: 451
+        capacity: 1
+      description: "createBlockValidator (Validator)"
+    updateBlockValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        description:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        parentId:
+          type: "number"
+          example: 182
+          required: true
+        capacity:
+          type: "number"
+          example: 1
+          minimum: 1
+          required: true
+      example:
+        name: "Lorem Ipsum"
+        description: "Lorem Ipsum"
+        parentId: 182
+        capacity: 1
+      description: "updateBlockValidator (Validator)"
+    createEventValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+          maxLength: 255
+        description:
+          type: "string"
+          example: "Lorem Ipsum"
+        slug:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        startDate:
+          type: "number"
+          example: 543
+          required: true
+        endDate:
+          type: "number"
+          example: 877
+          required: true
+        lat:
+          type: "number"
+          example: 612
+        long:
+          type: "number"
+          example: 656
+        primaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+        secondaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        name: "Lorem Ipsum"
+        description: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        startDate: 543
+        endDate: 877
+        lat: 612
+        long: 656
+        primaryColor: "Lorem Ipsum"
+        secondaryColor: "Lorem Ipsum"
+      description: "createEventValidator (Validator)"
+    updateEventValidator:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+          example: "Lorem Ipsum"
+          maxLength: 255
+        description:
+          type: "string"
+          example: "Lorem Ipsum"
+        slug:
+          type: "string"
+          example: "Lorem Ipsum"
+        startDate:
+          type: "number"
+          example: 753
+        endDate:
+          type: "number"
+          example: 607
+        lat:
+          type: "number"
+          example: 29
+        long:
+          type: "number"
+          example: 916
+        primaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+        secondaryColor:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        name: "Lorem Ipsum"
+        description: "Lorem Ipsum"
+        slug: "Lorem Ipsum"
+        startDate: 753
+        endDate: 607
+        lat: 29
+        long: 916
+        primaryColor: "Lorem Ipsum"
+        secondaryColor: "Lorem Ipsum"
+      description: "updateEventValidator (Validator)"
+    participantsStoreValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        eventId:
+          type: "number"
+          example: 570
+          required: true
+        firstName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        lastName:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        email: "Lorem Ipsum"
+        eventId: 570
+        firstName: "Lorem Ipsum"
+        lastName: "Lorem Ipsum"
+      description: "participantsStoreValidator (Validator)"
+    participantsUpdateValidator:
+      type: "object"
+      properties:
+        email:
+          type: "string"
+          example: "Lorem Ipsum"
+        eventId:
+          type: "number"
+          example: 495
+        firstName:
+          type: "string"
+          example: "Lorem Ipsum"
+        lastName:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        email: "Lorem Ipsum"
+        eventId: 495
+        firstName: "Lorem Ipsum"
+        lastName: "Lorem Ipsum"
+      description: "participantsUpdateValidator (Validator)"
+    createPermissionValidator:
+      type: "object"
+      properties:
+        action:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+        subject:
+          type: "string"
+          example: "Lorem Ipsum"
+          required: true
+      example:
+        action: "Lorem Ipsum"
+        subject: "Lorem Ipsum"
+      description: "createPermissionValidator (Validator)"
+    updatePermissionValidator:
+      type: "object"
+      properties:
+        action:
+          type: "string"
+          example: "Lorem Ipsum"
+        subject:
+          type: "string"
+          example: "Lorem Ipsum"
+      example:
+        action: "Lorem Ipsum"
+        subject: "Lorem Ipsum"
+      description: "updatePermissionValidator (Validator)"
+paths:
+  /api/v1/participants:
+    get:
+      summary: "Get a list of participants (index)"
+      description: "\n\n _app/controllers/participants_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "PARTICIPANTS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/participants_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "PARTICIPANTS"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/participants/{id}:
+    get:
+      summary: "Get a single instance of participants (show)"
+      description: "\n\n _app/controllers/participants_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "PARTICIPANTS"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update participants (update)"
+      description: "\n\n _app/controllers/participants_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "PARTICIPANTS"
+      responses:
+        204:
+          description: "No Content"
+          content:
+            application/json: {}
+      security: []
+    delete:
+      summary: "Delete participants (destroy)"
+      description: "\n\n _app/controllers/participants_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "PARTICIPANTS"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/permissions:
+    get:
+      summary: "Get a list of v1 (index)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/permissions/create:
+    get:
+      summary: " (create)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **create**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/permissions/{id}:
+    get:
+      summary: "Get a single instance of v1 (show)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update v1 (update)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        204:
+          description: "No Content"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete v1 (destroy)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/permissions/{id}/edit:
+    get:
+      summary: " (edit)"
+      description: "\n\n _app/controllers/permissions_controller.ts_ - **edit**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/admins:
+    get:
+      summary: "Get a list of v1 (index)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/admins/create:
+    get:
+      summary: " (create)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **create**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/admins/{id}:
+    get:
+      summary: "Get a single instance of v1 (show)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update v1 (update)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        204:
+          description: "No Content"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete v1 (destroy)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/admins/{id}/edit:
+    get:
+      summary: " (edit)"
+      description: "\n\n _app/controllers/admins_controller.ts_ - **edit**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/events:
+    get:
+      summary: "Get a list of v1 (index)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/events/create:
+    get:
+      summary: " (create)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **create**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/events/{id}:
+    get:
+      summary: "Get a single instance of v1 (show)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update v1 (update)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        204:
+          description: "No Content"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete v1 (destroy)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/events/{id}/edit:
+    get:
+      summary: " (edit)"
+      description: "\n\n _app/controllers/events_controller.ts_ - **edit**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/blocks:
+    get:
+      summary: "Get a list of v1 (index)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **index**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    post:
+      summary: " (store)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **store**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        201:
+          description: "Created"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+  /api/v1/blocks/create:
+    get:
+      summary: " (create)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **create**"
+      parameters: []
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/blocks/{id}:
+    get:
+      summary: "Get a single instance of v1 (show)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **show**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+    put:
+      summary: "Update v1 (update)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **update**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        204:
+          description: "No Content"
+          content:
+            application/json: {}
+      security: []
+      requestBody:
+        content:
+          application/json: {}
+    delete:
+      summary: "Delete v1 (destroy)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **destroy**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/blocks/{id}/edit:
+    get:
+      summary: " (edit)"
+      description: "\n\n _app/controllers/blocks_controller.ts_ - **edit**"
+      parameters:
+        - in: "path"
+          name: "id"
+          schema:
+            type: "string"
+          required: true
+      tags:
+        - "V1"
+      responses:
+        200:
+          description: "OK"
+          content:
+            application/json: {}
+      security: []
+  /api/v1/auth/login:
+    post:
+      summary: " (login)"
+      description: "Enables login. Default method is token authorization. Support rememberMe functionality. If rememberMe is set to true then token expires in 30 days, otherwise in 24h.\n\n _app/controllers/auth_controller.ts_ - **login**"
+      operationId: "loginAdmin"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  admin:
+                    $ref: "#/components/schemas/Admin"
+                  token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
+              example:
+                admin:
+                  id: 430
+                  firstName: "John"
+                  lastName: "Doe"
+                  email: "johndoe@example.com"
+                  type: {}
+                  active: true
+                  createdAt: "2021-03-23T16:13:08.489+01:00"
+                  updatedAt: "2021-03-23T16:13:08.489+01:00"
+                token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Invalid user credentials"
+              example:
+                errors:
+                  - message: "Invalid user credentials"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Password field is required"
+                          field: "password"
+              example:
+                errors:
+                  - message: "Password field is required"
+                    field: "password"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/loginValidator"
+            example:
+              email: "Lorem Ipsum"
+              password: "Lorem Ipsum"
+              rememberMe: true
+  /api/v1/auth/register:
+    post:
+      summary: " (register)"
+      description: "Enables registration of admin. After registration admin is logged in and bearer token is generated.\n\n _app/controllers/auth_controller.ts_ - **register**"
+      operationId: "registerAdmin"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  admin:
+                    $ref: "#/components/schemas/Admin"
+                  token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
+              example:
+                admin:
+                  id: 430
+                  firstName: "John"
+                  lastName: "Doe"
+                  email: "johndoe@example.com"
+                  type: {}
+                  active: true
+                  createdAt: "2021-03-23T16:13:08.489+01:00"
+                  updatedAt: "2021-03-23T16:13:08.489+01:00"
+                token: "oat_Mw.YUxCZHV2Y0ZjNzJKcU5LejV0Q241V0JDUm83QlspsRENDZU9qT"
+          description: "Returns **200** (OK) as **application/json**"
+        422:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "First name field is required"
+                          field: "firstName"
+              example:
+                errors:
+                  - message: "First name field is required"
+                    field: "firstName"
+          description: "Returns **422** (Unprocessable Entity) as **application/json**"
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/registerAdminValidator"
+            example:
+              email: "Lorem Ipsum"
+              password: "Lorem Ipsum"
+              firstName: "Lorem Ipsum"
+              lastName: "Lorem Ipsum"
+  /api/v1/auth/me:
+    get:
+      summary: " (me)"
+      description: "Returns **200** (OK) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **me**"
+      operationId: "authenticatedAdmin"
+      parameters: []
+      tags:
+        - "AUTH"
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Admin"
+              example:
+                id: 430
+                firstName: "John"
+                lastName: "Doe"
+                email: "johndoe@example.com"
+                type: {}
+                active: true
+                createdAt: "2021-03-23T16:13:08.489+01:00"
+                updatedAt: "2021-03-23T16:13:08.489+01:00"
+          description: "Returns **200** (OK) as **application/json**"
+        400:
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  errors:
+                    type: "object"
+                    properties:
+                      0:
+                        type: "object"
+                        properties:
+                          message: "Unauthorized access"
+              example:
+                errors:
+                  - message: "Unauthorized access"
+          description: "Returns **400** (Bad Request) as **application/json**"
+        401:
+          description: "Returns **401** (Unauthorized)"
+        403:
+          description: "Returns **403** (Forbidden)"
+      security:
+        - BearerAuth:
+            - "access"
+tags:
+  - name: "V1"
+    description: "Everything related to V1"
+  - name: "PARTICIPANTS"
+    description: "Everything related to PARTICIPANTS"
+  - name: "PARTICIPANTS"
+    description: "Everything related to PARTICIPANTS"
+  - name: "PARTICIPANTS"
+    description: "Everything related to PARTICIPANTS"
+  - name: "PARTICIPANTS"
+    description: "Everything related to PARTICIPANTS"
+  - name: "PARTICIPANTS"
+    description: "Everything related to PARTICIPANTS"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
+  - name: "AUTH"
+    description: "Everything related to AUTH"
