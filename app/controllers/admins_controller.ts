@@ -67,8 +67,7 @@ export default class AdminsController {
    * Delete record
    */
   async destroy({ params, response }: HttpContext) {
-    const adminToDelete = await Admin.findOrFail(params.id);
-    await adminToDelete.delete();
+    await this.adminService.deleteAdmin(+params.id);
     return response.noContent();
   }
 }
