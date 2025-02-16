@@ -1,6 +1,6 @@
 import Admin from "#models/admin";
 
-import { AdminCreateDTO } from "../types/admin_types.js";
+import { AdminCreateDTO, AdminUpdateDTO } from "../types/admin_types.js";
 
 export class AdminService {
   async createAdmin(newAdminData: AdminCreateDTO) {
@@ -26,5 +26,19 @@ export class AdminService {
     );
 
     await admin.related("permissions").attach(transformedPermissions);
+  }
+
+  async updateAdmin(adminId: number, adminUpdates: AdminUpdateDTO) {
+    const admin = await Admin.findOrFail(adminId);
+
+    admin.merge(adminUpdates);
+
+    if (adminUpdates.permissions) {
+      await this.addAdminPermissions(admin, adminUpdates.permissions);
+    }
+
+    await admin.save();
+
+    return await Admin.findOrFail(adminId);
   }
 }
