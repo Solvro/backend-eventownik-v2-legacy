@@ -1,5 +1,4 @@
 import vine from "@vinejs/vine";
-import { Infer } from "@vinejs/vine/types";
 
 export const adminSchema = vine.object({
   firstName: vine.string(),
@@ -26,8 +25,6 @@ export const adminSchema = vine.object({
     )
     .optional(),
 });
-
-export type AdminCreateDTO = Infer<typeof adminSchema>;
 
 export const createAdminValidator = vine.compile(adminSchema);
 
