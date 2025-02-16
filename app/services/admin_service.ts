@@ -1,5 +1,6 @@
 import Admin from "#models/admin";
-import { AdminCreateDTO } from "#validators/admin_validators";
+
+import { AdminCreateDTO } from "../types/admin_types.js";
 
 export class AdminService {
   async createAdmin(newAdminData: AdminCreateDTO) {
