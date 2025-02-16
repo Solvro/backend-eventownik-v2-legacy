@@ -1,12 +1,11 @@
-import { inject } from "@adonisjs/core";
-import type { HttpContext } from "@adonisjs/core/http";
-
 import Admin from "#models/admin";
 import { AdminService } from "#services/admin_service";
 import {
   createAdminValidator,
   updateAdminValidator,
 } from "#validators/admin_validators";
+import { inject } from "@adonisjs/core";
+import type { HttpContext } from "@adonisjs/core/http";
 
 @inject()
 export default class AdminsController {
@@ -56,15 +55,12 @@ export default class AdminsController {
       return admin;
     }
 
-    admin.merge(adminUpdates);
+    const updatedAdmin = await this.adminService.updateAdmin(
+      +params.id,
+      adminUpdates,
+    );
 
-    adminUpdates.permissions?.forEach(async (adminPermission) => {
-      await admin.related("permissions").attach({
-        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
-      });
-    });
-
-    return await admin.save();
+    return updatedAdmin;
   }
 
   /**
