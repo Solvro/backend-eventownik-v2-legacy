@@ -41,4 +41,9 @@ export class AdminService {
 
     return await Admin.findOrFail(adminId);
   }
+
+  async deleteAdmin(adminId: number) {
+    const adminToDelete = await Admin.findOrFail(adminId);
+    await adminToDelete.delete();
+  }
 }
