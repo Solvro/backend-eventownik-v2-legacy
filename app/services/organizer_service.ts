@@ -1,6 +1,7 @@
+import { inject } from "@adonisjs/core";
+
 import Admin from "#models/admin";
 import { createAdminValidator } from "#validators/admin_validators";
-import { inject } from "@adonisjs/core";
 
 import { AdminService } from "./admin_service.js";
 
@@ -15,7 +16,7 @@ export class OrganizerService {
   ) {
     const admin = await Admin.findBy("email", organizerData.email);
 
-    if (admin) {
+    if (admin !== null) {
       organizerData.permissionsIds.forEach(async (permissionId) => {
         await admin
           .related("permissions")

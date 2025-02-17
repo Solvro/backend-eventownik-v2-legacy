@@ -1,6 +1,8 @@
-import Admin from "#models/admin";
-import testUtils from "@adonisjs/core/services/test_utils";
 import { test } from "@japa/runner";
+
+import testUtils from "@adonisjs/core/services/test_utils";
+
+import Admin from "#models/admin";
 
 test.group("Auth: Login", (group) => {
   // Begin a DB transaction before each test and roll it back after
@@ -38,8 +40,10 @@ test.group("Auth: Login", (group) => {
       },
     });
 
-    assert.exists(response.body()?.token);
-    assert.isString(response.body()?.token);
+    const result = response.body() as { admin: Admin; token: string };
+
+    assert.exists(result.token);
+    assert.isString(result.token);
   });
 
   test("it should fail for invalid credentials (incorrect password)", async ({
@@ -144,7 +148,9 @@ test.group("Auth: Login", (group) => {
       },
     });
 
-    assert.exists(response.body()?.token);
-    assert.isString(response.body()?.token);
+    const result = response.body() as { admin: Admin; token: string };
+
+    assert.exists(result.token);
+    assert.isString(result.token);
   });
 });

@@ -1,14 +1,7 @@
-import {
-  BaseModel,
-  /*belongsTo,*/
-  column,
-  hasMany,
-} from "@adonisjs/lucid/orm";
-import type {
-  /*BelongsTo,*/
-  HasMany,
-} from "@adonisjs/lucid/types/relations";
 import { DateTime } from "luxon";
+
+import { BaseModel /*belongsTo,*/, column, hasMany } from "@adonisjs/lucid/orm";
+import type { /*BelongsTo,*/ HasMany } from "@adonisjs/lucid/types/relations";
 
 import Participant from "./participant.js";
 

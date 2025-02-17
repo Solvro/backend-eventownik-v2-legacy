@@ -1,11 +1,12 @@
+import { inject } from "@adonisjs/core";
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Admin from "#models/admin";
 import { AdminService } from "#services/admin_service";
 import {
   createAdminValidator,
   updateAdminValidator,
 } from "#validators/admin_validators";
-import { inject } from "@adonisjs/core";
-import type { HttpContext } from "@adonisjs/core/http";
 
 @inject()
 export default class AdminsController {
@@ -51,7 +52,7 @@ export default class AdminsController {
 
     const admin = await Admin.findOrFail(params.id);
 
-    if (!adminUpdates) {
+    if (adminUpdates === undefined) {
       return admin;
     }
 

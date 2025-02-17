@@ -1,6 +1,10 @@
-import Admin from "#models/admin";
-import testUtils from "@adonisjs/core/services/test_utils";
+import nodeAssert from "node:assert";
+
 import { test } from "@japa/runner";
+
+import testUtils from "@adonisjs/core/services/test_utils";
+
+import Admin from "#models/admin";
 
 test.group("Auth: Me", (group) => {
   // Wrap each test in a DB transaction
@@ -23,7 +27,10 @@ test.group("Auth: Me", (group) => {
     // 2. Create a token (or you can call /login to retrieve one if that’s your flow)
     //    Using the DbAccessTokensProvider.forModel(Admin) from your Admin model
     const tokenInstance = await Admin.accessTokens.create(admin);
-    const token = tokenInstance.value!.release();
+
+    nodeAssert(tokenInstance.value !== undefined);
+
+    const token = tokenInstance.value.release();
 
     // 3. Request GET /api/v1/auth/me with the token
     const response = await client
@@ -43,8 +50,10 @@ test.group("Auth: Me", (group) => {
       active: true,
     });
 
-    assert.exists(response.body().createdAt);
-    assert.exists(response.body().updatedAt);
+    const result = response.body() as Admin;
+
+    assert.exists(result.createdAt);
+    assert.exists(result.updatedAt);
   });
 
   test("it should fail if no token is provided", async ({ client }) => {
