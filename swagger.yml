@@ -47,7 +47,7 @@ components:
           example: "johndoe@example.com"
           format: "email"
         type:
-          $ref: "#/components/schemas/\"organizer\""
+          $ref: '#/components/schemas/"organizer"'
           example: "organizer"
           enum:
             - "organizer"

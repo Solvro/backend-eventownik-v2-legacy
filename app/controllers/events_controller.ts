@@ -1,6 +1,7 @@
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Event from "#models/event";
 import { createEventValidator, updateEventValidator } from "#validators/event";
-import type { HttpContext } from "@adonisjs/core/http";
 
 export default class EventController {
   public async index({ request }: HttpContext) {

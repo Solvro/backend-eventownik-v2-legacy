@@ -1,8 +1,9 @@
-import abilities from "#abilities/main";
-import { policies } from "#policies/main";
 import { Bouncer } from "@adonisjs/bouncer";
 import type { HttpContext } from "@adonisjs/core/http";
 import type { NextFn } from "@adonisjs/core/types/http";
+
+import abilities from "#abilities/main";
+import { policies } from "#policies/main";
 
 /**
  * Init bouncer middleware is used to create a bouncer instance
@@ -15,7 +16,7 @@ export default class InitializeBouncerMiddleware {
      * We will pull the user from the HTTP context.
      */
     ctx.bouncer = new Bouncer(
-      () => ctx.auth.user || null,
+      () => ctx.auth.user ?? null,
       abilities,
       policies,
     ).setContainerResolver(ctx.containerResolver);

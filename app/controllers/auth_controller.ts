@@ -1,6 +1,9 @@
+import assert from "node:assert";
+
+import type { HttpContext } from "@adonisjs/core/http";
+
 import Admin from "#models/admin";
 import { loginValidator, registerAdminValidator } from "#validators/auth";
-import type { HttpContext } from "@adonisjs/core/http";
 
 export default class AuthController {
   /**
@@ -16,9 +19,12 @@ export default class AuthController {
     const data = await request.validateUsing(registerAdminValidator);
     const admin = await Admin.create({ type: "organizer", ...data });
     const token = await Admin.accessTokens.create(admin);
+
+    assert(token.value !== undefined, "Token value is missing");
+
     return {
       admin,
-      token: token.value!.release(),
+      token: token.value.release(),
     };
   }
 
@@ -38,12 +44,14 @@ export default class AuthController {
 
     const admin = await Admin.verifyCredentials(email, password);
     const token = await Admin.accessTokens.create(admin, [], {
-      expiresIn: rememberMe ? "30 days" : "1 day",
+      expiresIn: rememberMe === true ? "30 days" : "1 day",
     });
+
+    assert(token.value !== undefined, "Token value is missing");
 
     return {
       admin,
-      token: token.value!.release(),
+      token: token.value.release(),
     };
   }
 
