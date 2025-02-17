@@ -24,6 +24,8 @@ export default class extends BaseSchema {
         .references("admins.id");
 
       table.timestamps();
+
+      table.unique(["event_id", "permission_id", "admin_id"]);
     });
   }
 

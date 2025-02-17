@@ -1,11 +1,17 @@
 import Admin from "#models/admin";
+import { AdminService } from "#services/admin_service";
 import {
   createAdminValidator,
   updateAdminValidator,
 } from "#validators/admin_validators";
+import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
+@inject()
 export default class AdminsController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private adminService: AdminService) {}
+
   /**
    * Display a list of resource
    */
@@ -19,13 +25,7 @@ export default class AdminsController {
   async store({ request, response }: HttpContext) {
     const newAdminData = await createAdminValidator.validate(request.body());
 
-    const newAdmin = await Admin.create(newAdminData);
-
-    newAdminData.permissions?.forEach(async (adminPermission) => {
-      await newAdmin.related("permissions").attach({
-        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
-      });
-    });
+    const newAdmin = await this.adminService.createAdmin(newAdminData);
 
     return response
       .header("Location", `/api/v1/admins/${newAdmin.id}`)
@@ -50,6 +50,11 @@ export default class AdminsController {
     const adminUpdates = await updateAdminValidator.validate(request.body());
 
     const admin = await Admin.findOrFail(params.id);
+
+    if (!adminUpdates) {
+      return admin;
+    }
+
     admin.merge(adminUpdates);
 
     adminUpdates.permissions?.forEach(async (adminPermission) => {

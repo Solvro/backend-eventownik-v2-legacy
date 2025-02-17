@@ -17,7 +17,8 @@ export default class extends BaseSchema {
           enumName: "admin_type",
           existingType: false,
         })
-        .notNullable();
+        .notNullable()
+        .defaultTo("organizer");
       table.boolean("active").notNullable().defaultTo(true);
 
       table.timestamps();
