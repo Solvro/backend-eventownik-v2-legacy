@@ -54,6 +54,10 @@ jobs:
         run: npm run typecheck
         if: always()
 
+      - name: Run migrations
+        run: node ace migration:run
+        if: always()
+
       - name: Run tests
         run: npm test
         if: always()
