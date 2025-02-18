@@ -6,7 +6,10 @@ export class AdminService {
   async createAdmin(newAdminData: AdminCreateDTO) {
     const newAdmin = await Admin.create(newAdminData);
 
-    if (newAdminData.permissions && newAdminData.permissions.length > 0) {
+    if (
+      newAdminData.permissions !== undefined &&
+      newAdminData.permissions.length > 0
+    ) {
       await this.addAdminPermissions(newAdmin, newAdminData.permissions);
     }
 
@@ -33,7 +36,7 @@ export class AdminService {
 
     admin.merge(adminUpdates);
 
-    if (adminUpdates.permissions) {
+    if (adminUpdates.permissions !== undefined) {
       await this.addAdminPermissions(admin, adminUpdates.permissions);
     }
 
