@@ -99,7 +99,7 @@ export default class OrganizersController {
    * @operationId removeOrganizer
    * @description Removes organizer
    * @tag organizers
-   * @responseBody 200
+   * @responseBody 204 - {}
    */
   async destroy({ params }: HttpContext) {
     const eventId = +params.eventId;
