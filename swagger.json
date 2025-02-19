@@ -8,7 +8,7 @@
   "components": {
     "responses": {
       "Forbidden": {
-        "description": "Access token is missing or invalid."
+        "description": "Access token is missing or invalid"
       },
       "Accepted": {
         "description": "The request was accepted"
@@ -48,7 +48,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 430
+            "example": 811
           },
           "firstName": {
             "type": "string",
@@ -66,7 +66,10 @@
           "type": {
             "$ref": "#/components/schemas/\"organizer\"",
             "example": "organizer",
-            "enum": ["organizer", "superadmin"]
+            "enum": [
+              "organizer",
+              "superadmin"
+            ]
           },
           "active": {
             "type": "boolean",
@@ -105,7 +108,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 808
+            "example": 710
           },
           "name": {
             "type": "string",
@@ -117,7 +120,7 @@
           },
           "parentId": {
             "type": "number",
-            "example": 973
+            "example": 680
           },
           "parent": {
             "$ref": "#/components/schemas/Block",
@@ -132,7 +135,7 @@
           },
           "capacity": {
             "type": "number",
-            "example": 23
+            "example": 447
           },
           "createdAt": {
             "type": "string",
@@ -153,11 +156,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 313
+            "example": 118
           },
           "eventId": {
             "type": "number",
-            "example": 553
+            "example": 58
           },
           "name": {
             "type": "string",
@@ -205,11 +208,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 331
+            "example": 432
           },
           "organizerId": {
             "type": "number",
-            "example": 823
+            "example": 946
           },
           "name": {
             "type": "string",
@@ -235,7 +238,7 @@
           },
           "firstFormId": {
             "type": "number",
-            "example": 283
+            "example": 28
           },
           "lat": {
             "type": "number",
@@ -249,9 +252,13 @@
             "type": "string",
             "example": "Lorem Ipsum"
           },
-          "secondaryColor": {
+          "organizer": {
             "type": "string",
             "example": "Lorem Ipsum"
+          },
+          "participantsCount": {
+            "type": "number",
+            "example": 403
           },
           "createdAt": {
             "type": "string",
@@ -262,6 +269,10 @@
             "type": "string",
             "example": "2021-03-23T16:13:08.489+01:00",
             "format": "date-time"
+          },
+          "admin": {
+            "$ref": "#/components/schemas/Admin",
+            "example": null
           },
           "participants": {
             "type": "array",
@@ -279,11 +290,11 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 234
+            "example": 852
           },
           "eventId": {
             "type": "number",
-            "example": 828
+            "example": 830
           },
           "isOpen": {
             "type": "boolean",
@@ -330,7 +341,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 265
+            "example": 580
           },
           "email": {
             "type": "string",
@@ -339,7 +350,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 308
+            "example": 291
           },
           "firstName": {
             "type": "string",
@@ -379,7 +390,7 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 211
+            "example": 199
           },
           "action": {
             "type": "string",
@@ -475,13 +486,16 @@
           "email": {
             "type": "string",
             "example": "Lorem Ipsum",
+            "pattern": "async (db, value)=>// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions\n        !await db.from(\"admins\").where(\"email\", value).first()",
             "required": true
           },
           "type": {
             "type": "number",
-            "example": 32,
-            "choices": ["organizer", "superadmin"],
-            "required": true
+            "example": 737,
+            "choices": [
+              "organizer",
+              "superadmin"
+            ]
           },
           "active": {
             "type": "boolean",
@@ -494,12 +508,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 275,
+                  "example": 321,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 187,
+                  "example": 817,
                   "required": true
                 }
               }
@@ -511,12 +525,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 32,
+          "type": 737,
           "active": true,
           "permissions": [
             {
-              "permissionId": 275,
-              "eventId": 187
+              "permissionId": 321,
+              "eventId": 817
             }
           ]
         },
@@ -527,24 +541,32 @@
         "properties": {
           "firstName": {
             "type": "string",
-            "example": "Lorem Ipsum"
+            "example": "Lorem Ipsum",
+            "required": true
           },
           "lastName": {
             "type": "string",
-            "example": "Lorem Ipsum"
+            "example": "Lorem Ipsum",
+            "required": true
           },
           "password": {
             "type": "string",
-            "example": "Lorem Ipsum"
+            "example": "Lorem Ipsum",
+            "required": true
           },
           "email": {
             "type": "string",
-            "example": "Lorem Ipsum"
+            "example": "Lorem Ipsum",
+            "pattern": "async (db, value)=>// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions\n        !await db.from(\"admins\").where(\"email\", value).first()",
+            "required": true
           },
           "type": {
             "type": "number",
-            "example": 266,
-            "choices": ["organizer", "superadmin"]
+            "example": 308,
+            "choices": [
+              "organizer",
+              "superadmin"
+            ]
           },
           "active": {
             "type": "boolean",
@@ -557,12 +579,12 @@
               "properties": {
                 "permissionId": {
                   "type": "number",
-                  "example": 346,
+                  "example": 21,
                   "required": true
                 },
                 "eventId": {
                   "type": "number",
-                  "example": 782,
+                  "example": 728,
                   "required": true
                 }
               }
@@ -574,12 +596,12 @@
           "lastName": "Lorem Ipsum",
           "password": "Lorem Ipsum",
           "email": "Lorem Ipsum",
-          "type": 266,
+          "type": 308,
           "active": true,
           "permissions": [
             {
-              "permissionId": 346,
-              "eventId": 782
+              "permissionId": 21,
+              "eventId": 728
             }
           ]
         },
@@ -616,6 +638,7 @@
           "email": {
             "type": "string",
             "example": "Lorem Ipsum",
+            "pattern": "async (db, value)=>// eslint-disable-next-line @typescript-eslint/strict-boolean-expressions\n        !await db.from(\"admins\").where(\"email\", value).first()",
             "required": true
           },
           "password": {
@@ -658,7 +681,7 @@
           },
           "parentId": {
             "type": "number",
-            "example": 451,
+            "example": 844,
             "required": true
           },
           "capacity": {
@@ -671,7 +694,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "parentId": 451,
+          "parentId": 844,
           "capacity": 1
         },
         "description": "createBlockValidator (Validator)"
@@ -691,7 +714,7 @@
           },
           "parentId": {
             "type": "number",
-            "example": 182,
+            "example": 492,
             "required": true
           },
           "capacity": {
@@ -704,7 +727,7 @@
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
-          "parentId": 182,
+          "parentId": 492,
           "capacity": 1
         },
         "description": "updateBlockValidator (Validator)"
@@ -722,6 +745,10 @@
             "type": "string",
             "example": "Lorem Ipsum"
           },
+          "organizer": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
           "slug": {
             "type": "string",
             "example": "Lorem Ipsum",
@@ -729,41 +756,40 @@
           },
           "startDate": {
             "type": "number",
-            "example": 543,
-            "required": true
+            "example": 773
           },
           "endDate": {
             "type": "number",
-            "example": 877,
-            "required": true
+            "example": 761
           },
           "lat": {
             "type": "number",
-            "example": 612
+            "example": 324
           },
           "long": {
             "type": "number",
-            "example": 656
+            "example": 658
           },
           "primaryColor": {
             "type": "string",
             "example": "Lorem Ipsum"
           },
-          "secondaryColor": {
-            "type": "string",
-            "example": "Lorem Ipsum"
+          "participantsCount": {
+            "type": "number",
+            "example": 48
           }
         },
         "example": {
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
+          "organizer": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "startDate": 543,
-          "endDate": 877,
-          "lat": 612,
-          "long": 656,
+          "startDate": 773,
+          "endDate": 761,
+          "lat": 324,
+          "long": 658,
           "primaryColor": "Lorem Ipsum",
-          "secondaryColor": "Lorem Ipsum"
+          "participantsCount": 48
         },
         "description": "createEventValidator (Validator)"
       },
@@ -785,25 +811,29 @@
           },
           "startDate": {
             "type": "number",
-            "example": 753
+            "example": 269
           },
           "endDate": {
             "type": "number",
-            "example": 607
+            "example": 460
           },
           "lat": {
             "type": "number",
-            "example": 29
+            "example": 533
           },
           "long": {
             "type": "number",
-            "example": 916
+            "example": 648
           },
           "primaryColor": {
             "type": "string",
             "example": "Lorem Ipsum"
           },
-          "secondaryColor": {
+          "participantsCount": {
+            "type": "number",
+            "example": 679
+          },
+          "organizer": {
             "type": "string",
             "example": "Lorem Ipsum"
           }
@@ -812,14 +842,74 @@
           "name": "Lorem Ipsum",
           "description": "Lorem Ipsum",
           "slug": "Lorem Ipsum",
-          "startDate": 753,
-          "endDate": 607,
-          "lat": 29,
-          "long": 916,
+          "startDate": 269,
+          "endDate": 460,
+          "lat": 533,
+          "long": 648,
           "primaryColor": "Lorem Ipsum",
-          "secondaryColor": "Lorem Ipsum"
+          "participantsCount": 679,
+          "organizer": "Lorem Ipsum"
         },
         "description": "updateEventValidator (Validator)"
+      },
+      "addOrganizerValidator": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "Lorem Ipsum",
+            "required": true
+          },
+          "permissionsIds": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 712
+            },
+            "required": true
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          },
+          "password": {
+            "type": "string",
+            "example": "Lorem Ipsum"
+          }
+        },
+        "example": {
+          "email": "Lorem Ipsum",
+          "permissionsIds": [
+            712
+          ],
+          "firstName": "Lorem Ipsum",
+          "lastName": "Lorem Ipsum",
+          "password": "Lorem Ipsum"
+        },
+        "description": "addOrganizerValidator (Validator)"
+      },
+      "updateOrganizerPermissionsValidator": {
+        "type": "object",
+        "properties": {
+          "permissionsIds": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "example": 473
+            },
+            "required": true
+          }
+        },
+        "example": {
+          "permissionsIds": [
+            473
+          ]
+        },
+        "description": "updateOrganizerPermissionsValidator (Validator)"
       },
       "participantsStoreValidator": {
         "type": "object",
@@ -831,7 +921,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 570,
+            "example": 93,
             "required": true
           },
           "firstName": {
@@ -847,7 +937,7 @@
         },
         "example": {
           "email": "Lorem Ipsum",
-          "eventId": 570,
+          "eventId": 93,
           "firstName": "Lorem Ipsum",
           "lastName": "Lorem Ipsum"
         },
@@ -862,7 +952,7 @@
           },
           "eventId": {
             "type": "number",
-            "example": 495
+            "example": 386
           },
           "firstName": {
             "type": "string",
@@ -875,7 +965,7 @@
         },
         "example": {
           "email": "Lorem Ipsum",
-          "eventId": 495,
+          "eventId": 386,
           "firstName": "Lorem Ipsum",
           "lastName": "Lorem Ipsum"
         },
@@ -927,31 +1017,47 @@
         "summary": "Get a list of participants (index)",
         "description": "\n\n _app/controllers/participants_controller.ts_ - **index**",
         "parameters": [],
-        "tags": ["PARTICIPANTS"],
+        "tags": [
+          "PARTICIPANTS"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "post": {
         "summary": " (store)",
         "description": "\n\n _app/controllers/participants_controller.ts_ - **store**",
         "parameters": [],
-        "tags": ["PARTICIPANTS"],
+        "tags": [
+          "PARTICIPANTS"
+        ],
         "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/participants/{id}": {
@@ -968,16 +1074,24 @@
             "required": true
           }
         ],
-        "tags": ["PARTICIPANTS"],
+        "tags": [
+          "PARTICIPANTS"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "put": {
         "summary": "Update participants (update)",
@@ -992,16 +1106,24 @@
             "required": true
           }
         ],
-        "tags": ["PARTICIPANTS"],
+        "tags": [
+          "PARTICIPANTS"
+        ],
         "responses": {
-          "204": {
-            "description": "No Content",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "delete": {
         "summary": "Delete participants (destroy)",
@@ -1016,51 +1138,105 @@
             "required": true
           }
         ],
-        "tags": ["PARTICIPANTS"],
+        "tags": [
+          "PARTICIPANTS"
+        ],
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/permissions": {
       "get": {
-        "summary": "Get a list of v1 (index)",
-        "description": "\n\n _app/controllers/permissions_controller.ts_ - **index**",
+        "summary": "Get a list of permissions (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/permissions_controller.ts_ - **index**",
+        "operationId": "getPermissions",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "PERMISSIONS"
+        ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Permission"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 199,
+                    "action": "Lorem Ipsum",
+                    "subject": "Lorem Ipsum"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "post": {
         "summary": " (store)",
-        "description": "\n\n _app/controllers/permissions_controller.ts_ - **store**",
+        "description": "Creates a permission\n\n _app/controllers/permissions_controller.ts_ - **store**",
+        "operationId": "createPermission",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "PERMISSIONS"
+        ],
         "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createPermissionValidator"
+              },
+              "example": {
+                "action": "Lorem Ipsum",
+                "subject": "Lorem Ipsum"
+              }
+            }
           }
         }
       }
@@ -1070,22 +1246,31 @@
         "summary": " (create)",
         "description": "\n\n _app/controllers/permissions_controller.ts_ - **create**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/permissions/{id}": {
       "get": {
-        "summary": "Get a single instance of v1 (show)",
-        "description": "\n\n _app/controllers/permissions_controller.ts_ - **show**",
+        "summary": "Get a single instance of permissions (show)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/permissions_controller.ts_ - **show**",
+        "operationId": "getPermission",
         "parameters": [
           {
             "in": "path",
@@ -1096,20 +1281,52 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "PERMISSIONS"
+        ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                },
+                "example": {
+                  "id": 199,
+                  "action": "Lorem Ipsum",
+                  "subject": "Lorem Ipsum"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "put": {
-        "summary": "Update v1 (update)",
-        "description": "\n\n _app/controllers/permissions_controller.ts_ - **update**",
+        "summary": "Update permissions (update)",
+        "description": "Updates permission\n\n _app/controllers/permissions_controller.ts_ - **update**",
+        "operationId": "updateAdmin",
         "parameters": [
           {
             "in": "path",
@@ -1120,25 +1337,77 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "PERMISSIONS"
+        ],
         "responses": {
-          "204": {
-            "description": "No Content",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Permission"
+                },
+                "example": {
+                  "id": 199,
+                  "action": "Lorem Ipsum",
+                  "subject": "Lorem Ipsum"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found",
+                    "name": "Exception",
+                    "status": 404
+                  }
+                },
+                "example": {
+                  "message": "Row not found",
+                  "name": "Exception",
+                  "status": 404
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updatePermissionValidator"
+              },
+              "example": {
+                "action": "Lorem Ipsum",
+                "subject": "Lorem Ipsum"
+              }
+            }
           }
         }
       },
       "delete": {
-        "summary": "Delete v1 (destroy)",
-        "description": "\n\n _app/controllers/permissions_controller.ts_ - **destroy**",
+        "summary": "Delete permissions (destroy)",
+        "description": "Deletes a permission\n\n _app/controllers/permissions_controller.ts_ - **destroy**",
+        "operationId": "deletePermission",
         "parameters": [
           {
             "in": "path",
@@ -1149,16 +1418,36 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "PERMISSIONS"
+        ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "204": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/permissions/{id}/edit": {
@@ -1175,51 +1464,120 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/admins": {
       "get": {
-        "summary": "Get a list of v1 (index)",
-        "description": "\n\n _app/controllers/admins_controller.ts_ - **index**",
+        "summary": "Get a list of admins (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/admins_controller.ts_ - **index**",
+        "operationId": "getAdmins",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "ADMINS"
+        ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Admin"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 811,
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "johndoe@example.com",
+                    "type": {},
+                    "active": true,
+                    "createdAt": "2021-03-23T16:13:08.489+01:00",
+                    "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "post": {
         "summary": " (store)",
-        "description": "\n\n _app/controllers/admins_controller.ts_ - **store**",
+        "description": "Creates an admin\n\n _app/controllers/admins_controller.ts_ - **store**",
+        "operationId": "createAdmin",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "ADMINS"
+        ],
         "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createAdminValidator"
+              },
+              "example": {
+                "firstName": "Lorem Ipsum",
+                "lastName": "Lorem Ipsum",
+                "password": "Lorem Ipsum",
+                "email": "Lorem Ipsum",
+                "type": 737,
+                "active": true,
+                "permissions": [
+                  {
+                    "permissionId": 321,
+                    "eventId": 817
+                  }
+                ]
+              }
+            }
           }
         }
       }
@@ -1229,22 +1587,31 @@
         "summary": " (create)",
         "description": "\n\n _app/controllers/admins_controller.ts_ - **create**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/admins/{id}": {
       "get": {
-        "summary": "Get a single instance of v1 (show)",
-        "description": "\n\n _app/controllers/admins_controller.ts_ - **show**",
+        "summary": "Get a single instance of admins (show)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/admins_controller.ts_ - **show**",
+        "operationId": "getAdmin",
         "parameters": [
           {
             "in": "path",
@@ -1255,20 +1622,57 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "ADMINS"
+        ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Admin"
+                },
+                "example": {
+                  "id": 811,
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@example.com",
+                  "type": {},
+                  "active": true,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ message: \"Row not found\", \"name\": \"Exception\", status: 404},"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "put": {
-        "summary": "Update v1 (update)",
-        "description": "\n\n _app/controllers/admins_controller.ts_ - **update**",
+        "summary": "Update admins (update)",
+        "description": "Updates admin details\n\n _app/controllers/admins_controller.ts_ - **update**",
+        "operationId": "updateAdmin",
         "parameters": [
           {
             "in": "path",
@@ -1279,25 +1683,69 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "ADMINS"
+        ],
         "responses": {
-          "204": {
-            "description": "No Content",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Admin"
+                },
+                "example": {
+                  "id": 811,
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@example.com",
+                  "type": {},
+                  "active": true,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found",
+                    "name": "Exception",
+                    "status": 404
+                  }
+                },
+                "example": {
+                  "message": "Row not found",
+                  "name": "Exception",
+                  "status": 404
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
           }
         },
-        "security": [],
-        "requestBody": {
-          "content": {
-            "application/json": {}
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
           }
-        }
+        ]
       },
       "delete": {
-        "summary": "Delete v1 (destroy)",
-        "description": "\n\n _app/controllers/admins_controller.ts_ - **destroy**",
+        "summary": "Delete admins (destroy)",
+        "description": "Deletes an admin\n\n _app/controllers/admins_controller.ts_ - **destroy**",
+        "operationId": "deleteAdmin",
         "parameters": [
           {
             "in": "path",
@@ -1308,16 +1756,36 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "ADMINS"
+        ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "204": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/admins/{id}/edit": {
@@ -1334,51 +1802,172 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/events": {
       "get": {
-        "summary": "Get a list of v1 (index)",
-        "description": "\n\n _app/controllers/events_controller.ts_ - **index**",
+        "summary": "Get a list of event (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/events_controller.ts_ - **index**",
+        "operationId": "getEvents",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "EVENT"
+        ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Event"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 432,
+                    "organizerId": 946,
+                    "name": "John Doe",
+                    "description": "Lorem ipsum dolor sit amet",
+                    "slug": "Lorem Ipsum",
+                    "startDate": "2021-03-23T16:13:08.489+01:00",
+                    "endDate": "2021-03-23T16:13:08.489+01:00",
+                    "firstFormId": 28,
+                    "lat": 41.705,
+                    "long": -87.475,
+                    "primaryColor": "Lorem Ipsum",
+                    "organizer": "Lorem Ipsum",
+                    "participantsCount": 403,
+                    "createdAt": "2021-03-23T16:13:08.489+01:00",
+                    "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "post": {
         "summary": " (store)",
-        "description": "\n\n _app/controllers/events_controller.ts_ - **store**",
+        "description": "Returns **201** (Created) as **application/json**\n\n _app/controllers/events_controller.ts_ - **store**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "EVENT"
+        ],
         "responses": {
           "201": {
-            "description": "Created",
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                },
+                "example": {
+                  "id": 432,
+                  "organizerId": 946,
+                  "name": "John Doe",
+                  "description": "Lorem ipsum dolor sit amet",
+                  "slug": "Lorem Ipsum",
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "firstFormId": 28,
+                  "lat": 41.705,
+                  "long": -87.475,
+                  "primaryColor": "Lorem Ipsum",
+                  "organizer": "Lorem Ipsum",
+                  "participantsCount": 403,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **201** (Created) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid input data"
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **text/plain**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "Unauthorized access"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "422": {
+            "content": {
+              "text/plain": {
+                "example": "Validation failed"
+              }
+            },
+            "description": "Returns **422** (Unprocessable Entity) as **text/plain**"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/createEventValidator"
+              },
+              "example": {
+                "name": "Lorem Ipsum",
+                "description": "Lorem Ipsum",
+                "organizer": "Lorem Ipsum",
+                "slug": "Lorem Ipsum",
+                "startDate": 773,
+                "endDate": 761,
+                "lat": 324,
+                "long": 658,
+                "primaryColor": "Lorem Ipsum",
+                "participantsCount": 48
+              }
+            }
           }
         }
       }
@@ -1388,16 +1977,24 @@
         "summary": " (create)",
         "description": "\n\n _app/controllers/events_controller.ts_ - **create**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/events/{id}": {
@@ -1414,69 +2011,196 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "put": {
-        "summary": "Update v1 (update)",
-        "description": "\n\n _app/controllers/events_controller.ts_ - **update**",
+        "summary": "Update event (update)",
+        "description": "Updates an existing event if user has permission\n\n _app/controllers/events_controller.ts_ - **update**",
+        "operationId": "updateEvent",
         "parameters": [
           {
             "in": "path",
             "name": "id",
+            "description": "Event identifier",
             "schema": {
-              "type": "string"
+              "example": "",
+              "type": "number"
             },
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "EVENT"
+        ],
         "responses": {
-          "204": {
-            "description": "No Content",
+          "200": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                },
+                "example": {
+                  "id": 432,
+                  "organizerId": 946,
+                  "name": "John Doe",
+                  "description": "Lorem ipsum dolor sit amet",
+                  "slug": "Lorem Ipsum",
+                  "startDate": "2021-03-23T16:13:08.489+01:00",
+                  "endDate": "2021-03-23T16:13:08.489+01:00",
+                  "firstFormId": 28,
+                  "lat": 41.705,
+                  "long": -87.475,
+                  "primaryColor": "Lorem Ipsum",
+                  "organizer": "Lorem Ipsum",
+                  "participantsCount": 403,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "400": {
+            "content": {
+              "text/plain": {
+                "example": "Invalid input data"
+              }
+            },
+            "description": "Returns **400** (Bad Request) as **text/plain**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "content": {
+              "text/plain": {
+                "example": "Not authorized to update this event"
+              }
+            },
+            "description": "Returns **403** (Forbidden) as **text/plain**"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "Event not found"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
+          },
+          "422": {
+            "content": {
+              "text/plain": {
+                "example": "Validation failed"
+              }
+            },
+            "description": "Returns **422** (Unprocessable Entity) as **text/plain**"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
-            "application/json": {}
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateEventValidator"
+              },
+              "example": {
+                "name": "Lorem Ipsum",
+                "description": "Lorem Ipsum",
+                "slug": "Lorem Ipsum",
+                "startDate": 269,
+                "endDate": 460,
+                "lat": 533,
+                "long": 648,
+                "primaryColor": "Lorem Ipsum",
+                "participantsCount": 679,
+                "organizer": "Lorem Ipsum"
+              }
+            }
           }
         }
       },
       "delete": {
-        "summary": "Delete v1 (destroy)",
-        "description": "\n\n _app/controllers/events_controller.ts_ - **destroy**",
+        "summary": "Delete event (destroy)",
+        "description": "Deletes an event if user has permission\n\n _app/controllers/events_controller.ts_ - **destroy**",
+        "operationId": "deleteEvent",
         "parameters": [
           {
             "in": "path",
             "name": "id",
+            "description": "Event identifier",
             "schema": {
-              "type": "string"
+              "example": "",
+              "type": "number"
             },
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "EVENT"
+        ],
         "responses": {
-          "202": {
-            "description": "Accepted",
+          "204": {
             "content": {
-              "application/json": {}
-            }
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "401": {
+            "content": {
+              "text/plain": {
+                "example": "You don't have permissions to this actions"
+              }
+            },
+            "description": "Returns **401** (Unauthorized) as **text/plain**"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "Event not found"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/events/{id}/edit": {
@@ -1493,16 +2217,430 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/v1/events/{eventId}/organizers": {
+      "get": {
+        "summary": "Get a list of organizers (index)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/organizers_controller.ts_ - **index**",
+        "operationId": "getEventOrganizers",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ORGANIZERS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Admin"
+                  }
+                },
+                "example": [
+                  {
+                    "id": 811,
+                    "firstName": "John",
+                    "lastName": "Doe",
+                    "email": "johndoe@example.com",
+                    "type": {},
+                    "active": true,
+                    "createdAt": "2021-03-23T16:13:08.489+01:00",
+                    "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                  }
+                ]
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      },
+      "post": {
+        "summary": " (store)",
+        "description": "Adds an admin as an event organizer\n\n _app/controllers/organizers_controller.ts_ - **store**",
+        "operationId": "addEventOrganizer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ORGANIZERS"
+        ],
+        "responses": {
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/addOrganizerValidator"
+              },
+              "example": {
+                "email": "Lorem Ipsum",
+                "permissionsIds": [
+                  712
+                ],
+                "firstName": "Lorem Ipsum",
+                "lastName": "Lorem Ipsum",
+                "password": "Lorem Ipsum"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/events/{eventId}/organizers/create": {
+      "get": {
+        "summary": " (create)",
+        "description": "\n\n _app/controllers/organizers_controller.ts_ - **create**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "V1"
+        ],
+        "responses": {
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/v1/events/{eventId}/organizers/{id}": {
+      "get": {
+        "summary": "Get a single instance of organizers (show)",
+        "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/organizers_controller.ts_ - **show**",
+        "operationId": "getEventOrganizer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ORGANIZERS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Admin"
+                },
+                "example": {
+                  "id": 811,
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@example.com",
+                  "type": {},
+                  "active": true,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "text/plain": {
+                "example": "{ error: `Organizer with id {organizerId} does not exist` },"
+              }
+            },
+            "description": "Returns **404** (Not Found) as **text/plain**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      },
+      "put": {
+        "summary": "Update organizers (update)",
+        "description": "Changes organizer's permissions to the ones specified in the request body\n\n _app/controllers/organizers_controller.ts_ - **update**",
+        "operationId": "updateOrganizerPermissions",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ORGANIZERS"
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Admin"
+                },
+                "example": {
+                  "id": 811,
+                  "firstName": "John",
+                  "lastName": "Doe",
+                  "email": "johndoe@example.com",
+                  "type": {},
+                  "active": true,
+                  "createdAt": "2021-03-23T16:13:08.489+01:00",
+                  "updatedAt": "2021-03-23T16:13:08.489+01:00"
+                }
+              }
+            },
+            "description": "Returns **200** (OK) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          },
+          "404": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": "Row not found",
+                    "name": "Exception",
+                    "status": 404
+                  }
+                },
+                "example": {
+                  "message": "Row not found",
+                  "name": "Exception",
+                  "status": 404
+                }
+              }
+            },
+            "description": "Returns **404** (Not Found) as **application/json**"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/updateOrganizerPermissionsValidator"
+              },
+              "example": {
+                "permissionsIds": [
+                  473
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete organizers (destroy)",
+        "description": "Removes organizer\n\n _app/controllers/organizers_controller.ts_ - **destroy**",
+        "operationId": "removeOrganizer",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "ORGANIZERS"
+        ],
+        "responses": {
+          "204": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "example": {}
+              }
+            },
+            "description": "Returns **204** (No Content) as **application/json**"
+          },
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
+      }
+    },
+    "/api/v1/events/{eventId}/organizers/{id}/edit": {
+      "get": {
+        "summary": " (edit)",
+        "description": "\n\n _app/controllers/organizers_controller.ts_ - **edit**",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "eventId",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "string"
+            },
+            "required": true
+          }
+        ],
+        "tags": [
+          "V1"
+        ],
+        "responses": {
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
+          }
+        },
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/blocks": {
@@ -1510,31 +2648,47 @@
         "summary": "Get a list of v1 (index)",
         "description": "\n\n _app/controllers/blocks_controller.ts_ - **index**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "post": {
         "summary": " (store)",
         "description": "\n\n _app/controllers/blocks_controller.ts_ - **store**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "201": {
-            "description": "Created",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {}
@@ -1547,16 +2701,24 @@
         "summary": " (create)",
         "description": "\n\n _app/controllers/blocks_controller.ts_ - **create**",
         "parameters": [],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/blocks/{id}": {
@@ -1573,16 +2735,24 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       },
       "put": {
         "summary": "Update v1 (update)",
@@ -1597,16 +2767,24 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "204": {
-            "description": "No Content",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": [],
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ],
         "requestBody": {
           "content": {
             "application/json": {}
@@ -1626,16 +2804,24 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "202": {
-            "description": "Accepted",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/blocks/{id}/edit": {
@@ -1652,16 +2838,24 @@
             "required": true
           }
         ],
-        "tags": ["V1"],
+        "tags": [
+          "V1"
+        ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {}
-            }
+          "401": {
+            "description": "Returns **401** (Unauthorized)"
+          },
+          "403": {
+            "description": "Returns **403** (Forbidden)"
           }
         },
-        "security": []
+        "security": [
+          {
+            "BearerAuth": [
+              "access"
+            ]
+          }
+        ]
       }
     },
     "/api/v1/auth/login": {
@@ -1670,7 +2864,9 @@
         "description": "Enables login. Default method is token authorization. Support rememberMe functionality. If rememberMe is set to true then token expires in 30 days, otherwise in 24h.\n\n _app/controllers/auth_controller.ts_ - **login**",
         "operationId": "loginAdmin",
         "parameters": [],
-        "tags": ["AUTH"],
+        "tags": [
+          "AUTH"
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1686,7 +2882,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 430,
+                    "id": 811,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -1787,7 +2983,9 @@
         "description": "Enables registration of admin. After registration admin is logged in and bearer token is generated.\n\n _app/controllers/auth_controller.ts_ - **register**",
         "operationId": "registerAdmin",
         "parameters": [],
-        "tags": ["AUTH"],
+        "tags": [
+          "AUTH"
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1803,7 +3001,7 @@
                 },
                 "example": {
                   "admin": {
-                    "id": 430,
+                    "id": 811,
                     "firstName": "John",
                     "lastName": "Doe",
                     "email": "johndoe@example.com",
@@ -1875,7 +3073,9 @@
         "description": "Returns **200** (OK) as **application/json**\n\n _app/controllers/auth_controller.ts_ - **me**",
         "operationId": "authenticatedAdmin",
         "parameters": [],
-        "tags": ["AUTH"],
+        "tags": [
+          "AUTH"
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1884,7 +3084,7 @@
                   "$ref": "#/components/schemas/Admin"
                 },
                 "example": {
-                  "id": 430,
+                  "id": 811,
                   "firstName": "John",
                   "lastName": "Doe",
                   "email": "johndoe@example.com",
@@ -1936,7 +3136,9 @@
         },
         "security": [
           {
-            "BearerAuth": ["access"]
+            "BearerAuth": [
+              "access"
+            ]
           }
         ]
       }
@@ -1966,6 +3168,82 @@
     {
       "name": "PARTICIPANTS",
       "description": "Everything related to PARTICIPANTS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "PERMISSIONS",
+      "description": "Everything related to PERMISSIONS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "ADMINS",
+      "description": "Everything related to ADMINS"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "EVENT",
+      "description": "Everything related to EVENT"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
+    },
+    {
+      "name": "ORGANIZERS",
+      "description": "Everything related to ORGANIZERS"
     },
     {
       "name": "AUTH",

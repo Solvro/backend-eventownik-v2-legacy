@@ -7,6 +7,7 @@ export default class extends BaseSeeder {
     await Permission.updateOrCreateMany(
       ["action", "subject"],
       [
+        { action: "manage", subject: "all" },
         { action: "update", subject: "event" },
         { action: "delete", subject: "event" },
         { action: "read", subject: "form" },

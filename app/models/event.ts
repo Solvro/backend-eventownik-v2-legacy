@@ -1,11 +1,11 @@
 import { DateTime } from "luxon";
 
-import { BaseModel /*belongsTo,*/, column, hasMany } from "@adonisjs/lucid/orm";
-import type { /*BelongsTo,*/ HasMany } from "@adonisjs/lucid/types/relations";
+import { BaseModel, afterCreate, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import type { HasMany, BelongsTo } from "@adonisjs/lucid/types/relations";
 
 import Participant from "./participant.js";
-
-// import Admin from './Admin.ts';
+import string from '@adonisjs/core/helpers/string'
+import Admin from './admin.js';
 // import Form from './Form.ts';
 
 export default class Event extends BaseModel {
@@ -22,7 +22,7 @@ export default class Event extends BaseModel {
   declare description: string | null;
 
   @column()
-  declare slug: string;
+  declare slug: string | null;
 
   @column.dateTime()
   declare startDate: DateTime;
@@ -43,7 +43,10 @@ export default class Event extends BaseModel {
   declare primaryColor: string | null;
 
   @column()
-  declare secondaryColor: string | null;
+  declare organizer: string | null;
+
+  @column()
+  declare participantsCount: number | null;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
@@ -51,12 +54,20 @@ export default class Event extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  // @belongsTo(() => Admin)
-  // public organizer: BelongsTo<typeof Admin>;
+  @belongsTo(() => Admin)
+  declare admin: BelongsTo<typeof Admin>;
 
   // @belongsTo(() => Form)
   // public firstForm: BelongsTo<typeof Form>;
 
   @hasMany(() => Participant)
   declare participants: HasMany<typeof Participant>;
+
+  @afterCreate()
+  public static async generateSlug(event: Event) {
+    if (event.name && !event.slug) {
+      event.slug = string.slug(`${event.name}-${event.id}`);
+      await event.save();
+    }
+  }
 }
