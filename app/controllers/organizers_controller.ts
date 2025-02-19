@@ -81,9 +81,8 @@ export default class OrganizersController {
     const eventId = +params.eventId;
     const organizerId = +params.id;
 
-    const permissionsIds = await updateOrganizerPermissionsValidator.validate(
-      request.body(),
-    );
+    const { permissionsIds } =
+      await updateOrganizerPermissionsValidator.validate(request.body());
 
     const updatedOrganizer = this.organizerService.updateOrganizerPermissions(
       organizerId,
