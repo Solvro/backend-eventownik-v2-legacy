@@ -14,14 +14,22 @@ export default class AdminsController {
   constructor(private adminService: AdminService) {}
 
   /**
-   * Display a list of resource
+   * @index
+   * @operationId getAdmins
+   * @description Returns an array of all admins
+   * @tag admins
+   * @responseBody 200 - <Admin[]>
    */
   async index() {
     return await Admin.query().preload("events").preload("permissions");
   }
 
   /**
-   * Handle form submission for the create action
+   * @store
+   * @operationId createAdmin
+   * @description Creates an admin
+   * @tag admins
+   * @requestBody <createAdminValidator>
    */
   async store({ request, response }: HttpContext) {
     const newAdminData = await createAdminValidator.validate(request.body());
@@ -34,18 +42,28 @@ export default class AdminsController {
   }
 
   /**
-   * Show individual record
+   * @show
+   * @operationId getAdmin
+   * @description Returns an admin
+   * @tag admins
+   * @responseBody 200 - <Admin>
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params }: HttpContext) {
     return await Admin.query()
       .where("id", +params.id)
       .preload("events")
       .preload("permissions")
-      .first();
+      .firstOrFail();
   }
 
   /**
-   * Handle form submission for the edit action
+   * @update
+   * @operationId updateAdmin
+   * @description Updates admin details
+   * @tag admins
+   * @responseBody 200 - <Admin>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request }: HttpContext) {
     const adminUpdates = await updateAdminValidator.validate(request.body());
@@ -56,23 +74,23 @@ export default class AdminsController {
       return admin;
     }
 
-    admin.merge(adminUpdates);
+    const updatedAdmin = await this.adminService.updateAdmin(
+      +params.id,
+      adminUpdates,
+    );
 
-    adminUpdates.permissions?.forEach(async (adminPermission) => {
-      await admin.related("permissions").attach({
-        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
-      });
-    });
-
-    return await admin.save();
+    return updatedAdmin;
   }
 
   /**
-   * Delete record
+   * @destroy
+   * @operationId deleteAdmin
+   * @description Deletes an admin
+   * @tag admins
+   * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
-    const adminToDelete = await Admin.findOrFail(params.id);
-    await adminToDelete.delete();
+    await this.adminService.deleteAdmin(+params.id);
     return response.noContent();
   }
 }

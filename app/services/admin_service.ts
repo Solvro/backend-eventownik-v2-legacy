@@ -1,16 +1,52 @@
 import Admin from "#models/admin";
-import { AdminCreateDTO } from "#validators/admin_validators";
+
+import { AdminCreateDTO, AdminUpdateDTO } from "../types/admin_types.js";
 
 export class AdminService {
   async createAdmin(newAdminData: AdminCreateDTO) {
     const newAdmin = await Admin.create(newAdminData);
 
-    newAdminData.permissions?.forEach(async (adminPermission) => {
-      await newAdmin.related("permissions").attach({
-        [adminPermission.permissionId]: { event_id: adminPermission.eventId },
-      });
-    });
+    if (
+      newAdminData.permissions !== undefined &&
+      newAdminData.permissions.length > 0
+    ) {
+      await this.addAdminPermissions(newAdmin, newAdminData.permissions);
+    }
 
     return newAdmin;
+  }
+
+  async addAdminPermissions(
+    admin: Admin,
+    permissions: { eventId: number; permissionId: number }[],
+  ) {
+    // Transform permissions to match database schema: event_id instead of eventId
+    const transformedPermissions = Object.fromEntries(
+      permissions.map((permission) => [
+        permission.permissionId,
+        { event_id: permission.eventId },
+      ]),
+    );
+
+    await admin.related("permissions").attach(transformedPermissions);
+  }
+
+  async updateAdmin(adminId: number, adminUpdates: AdminUpdateDTO) {
+    const admin = await Admin.findOrFail(adminId);
+
+    admin.merge(adminUpdates);
+
+    if (adminUpdates.permissions !== undefined) {
+      await this.addAdminPermissions(admin, adminUpdates.permissions);
+    }
+
+    await admin.save();
+
+    return await Admin.findOrFail(adminId);
+  }
+
+  async deleteAdmin(adminId: number) {
+    const adminToDelete = await Admin.findOrFail(adminId);
+    await adminToDelete.delete();
   }
 }
