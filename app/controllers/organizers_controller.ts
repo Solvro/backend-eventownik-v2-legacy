@@ -74,6 +74,7 @@ export default class OrganizersController {
    * @operationId updateOrganizerPermissions
    * @description Changes organizer's permissions to the ones specified in the request body
    * @tag organizers
+   * @requestBody <updateOrganizerPermissionsValidator>
    * @responseBody 200 - <Admin>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
