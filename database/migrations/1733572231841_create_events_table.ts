@@ -13,7 +13,7 @@ export default class EventsSchema extends BaseSchema {
         .onDelete("CASCADE");
       table.string("name", 255).notNullable();
       table.text("description", "long").nullable();
-      table.string("slug", 255).notNullable();
+      table.string("slug", 255).nullable();
       table.timestamp("start_date").notNullable();
       table.timestamp("end_date").notNullable();
       table

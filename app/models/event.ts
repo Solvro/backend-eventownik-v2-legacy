@@ -22,7 +22,7 @@ export default class Event extends BaseModel {
   declare description: string | null;
 
   @column()
-  declare slug: string;
+  declare slug: string | null;
 
   @column.dateTime()
   declare startDate: DateTime;

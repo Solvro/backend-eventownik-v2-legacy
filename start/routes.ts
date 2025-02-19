@@ -23,10 +23,16 @@ router
     router.resource("participants", ParticipantsController).apiOnly();
     router.resource("permissions", PermissionsController);
     router.resource("admins", AdminsController);
-    router.resource("events", EventController);
+    router.resource("events", EventController).use("*", middleware.auth());
     router.resource("blocks", BlocksController);
 
-
+    router
+      .group(() => {
+        router.post("create", [EventController, "store"]);
+        router.get("details", [EventController, "findEventById"]);
+        router.put("update", [EventController, "update"]);
+        router.delete("delete", [EventController, "destroy"]);
+      }).prefix("events").use(middleware.auth());
 
     router
       .group(() => {
