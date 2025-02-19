@@ -24,7 +24,8 @@ export default class EventsSchema extends BaseSchema {
       table.float("lat").nullable();
       table.float("long").nullable();
       table.string("primary_color", 12);
-      table.string("secondary_color", 12);
+      table.string("organizer", 255);
+      table.integer("participants_count");
       table.timestamps();
     });
   }

@@ -25,12 +25,15 @@ router.get("/docs", async () => {
 
 router
   .group(() => {
-    router.resource("participants", ParticipantsController).apiOnly();
-    router.resource("permissions", PermissionsController);
-    router.resource("admins", AdminsController);
-    router.resource("events", EventController);
-    router.resource("events/:eventId/organizers", OrganizersController);
-    router.resource("blocks", BlocksController);
+
+    router.group(()=>{
+      router.resource("participants", ParticipantsController).apiOnly();
+      router.resource("permissions", PermissionsController);
+      router.resource("admins", AdminsController);
+      router.resource("events", EventController);
+      router.resource("events/:eventId/organizers", OrganizersController);
+      router.resource("blocks", BlocksController);
+    }).use(middleware.auth())
 
     router
       .group(() => {
