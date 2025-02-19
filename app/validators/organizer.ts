@@ -13,5 +13,9 @@ export const addOrganizerValidator = vine.compile(
 );
 
 export const updateOrganizerPermissionsValidator = vine.compile(
-  vine.array(vine.number().exists({ table: "permissions", column: "id" })),
+  vine.object({
+    permissionsIds: vine.array(
+      vine.number().exists({ table: "permissions", column: "id" }),
+    ),
+  }),
 );
