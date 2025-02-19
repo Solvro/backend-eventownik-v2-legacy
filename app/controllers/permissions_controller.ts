@@ -8,21 +8,29 @@ import {
 
 export default class PermissionsController {
   /**
-   * Display a list of resource
+   * @index
+   * @operationId getPermissions
+   * @description Returns an array of all permissions
+   * @tag permissions
+   * @responseBody 200 - <Permission[]>
    */
   async index() {
     return await Permission.all();
   }
 
   /**
-   * Handle form submission for the create action
+   * @store
+   * @operationId createPermission
+   * @description Creates a permission
+   * @tag permissions
+   * @requestBody <createPermissionValidator>
    */
   async store({ request, response }: HttpContext) {
     const newPermissionData = await createPermissionValidator.validate(
       request.body(),
     );
 
-    const newPermission = await Permission.create({ ...newPermissionData });
+    const newPermission = await Permission.create(newPermissionData);
 
     return response
       .header("Location", `/api/v1/permissions/${newPermission.id}`)
@@ -30,14 +38,25 @@ export default class PermissionsController {
   }
 
   /**
-   * Show individual record
+   * @show
+   * @operationId getPermission
+   * @description Returns a permission
+   * @tag permissions
+   * @responseBody 200 - <Permission>
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params }: HttpContext) {
     return Permission.findOrFail(params.id);
   }
 
   /**
-   * Handle form submission for the edit action
+   * @update
+   * @operationId updateAdmin
+   * @description Updates permission
+   * @tag permissions
+   * @requestBody <updatePermissionValidator>
+   * @responseBody 200 - <Permission>
+   * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   async update({ params, request }: HttpContext) {
     const permissionUpdates = await updatePermissionValidator.validate(
@@ -51,7 +70,11 @@ export default class PermissionsController {
   }
 
   /**
-   * Delete record
+   * @destroy
+   * @operationId deletePermission
+   * @description Deletes a permission
+   * @tag permissions
+   * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
     const permissionToDelete = await Permission.findOrFail(params.id);
