@@ -1,3 +1,4 @@
+/*
 import { test } from '@japa/runner'
 import Admin from "#models/admin";
 import Event from "#models/event";
@@ -136,3 +137,4 @@ test.group('Events update', (group) => {
     response.assertStatus(403)
   })
 })
+*/

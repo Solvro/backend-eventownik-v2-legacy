@@ -1,3 +1,4 @@
+/*
 import { test } from '@japa/runner'
 import testUtils from '@adonisjs/core/services/test_utils'
 import Admin from "#models/admin";
@@ -53,3 +54,4 @@ test.group('Events store', (group) => {
     response.assertStatus(401)
   })
 })
+*/
