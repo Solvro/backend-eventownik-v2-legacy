@@ -28,10 +28,8 @@ router
 
     router
       .group(() => {
-        router.post("create", [EventController, "store"]);
-        router.get("details", [EventController, "findEventById"]);
-        router.put("update", [EventController, "update"]);
-        router.delete("delete", [EventController, "destroy"]);
+        router.get("details/{id}", [EventController, "findEventById"]);
+        router.get("myEvents", [EventController, "findEventsByOrganizerId"]);
       }).prefix("events").use(middleware.auth());
 
     router

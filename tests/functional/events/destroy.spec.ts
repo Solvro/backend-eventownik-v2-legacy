@@ -3,7 +3,6 @@ import testUtils from "@adonisjs/core/services/test_utils";
 import Admin from "#models/admin";
 import Event from "#models/event";
 import { DateTime } from "luxon";
-// client as user
 
 
 test.group('Events destroy', (group) => {
