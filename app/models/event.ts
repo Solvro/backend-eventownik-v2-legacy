@@ -10,6 +10,8 @@ import {
 } from "@adonisjs/lucid/orm";
 import type { HasMany, ManyToMany } from "@adonisjs/lucid/types/relations";
 
+import Email from "#models/email";
+
 import Admin from "./admin.js";
 import Participant from "./participant.js";
 import Permission from "./permission.js";
@@ -89,4 +91,7 @@ export default class Event extends BaseModel {
       await event.save();
     }
   }
+
+  @hasMany(() => Email)
+  declare emails: HasMany<typeof Email>;
 }
