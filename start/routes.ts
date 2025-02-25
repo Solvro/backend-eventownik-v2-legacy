@@ -62,5 +62,11 @@ router
         router.get("me", [AuthController, "me"]).use(middleware.auth());
       })
       .prefix("auth");
+
+    router
+      .group(() => {
+        router.get("/bySlug/:slug", [EventController, "showBySlug"]);
+      })
+      .prefix("events");
   })
   .prefix("api/v1");

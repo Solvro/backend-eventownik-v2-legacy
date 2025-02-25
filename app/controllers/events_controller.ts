@@ -149,4 +149,17 @@ export default class EventController {
     await event.delete();
     return { message: "Event successfully deleted" };
   }
+
+  /**
+   * @showBySlug
+   * @operationId showBySlug
+   * @description Returns event given by a path parameter. No Auth required
+   * @paramPath slug - Event slug identifier - @type(string) @required
+   * @responseBody 200 - <Event>
+   * @responseBody 204 - {}
+   * @tag event
+   */
+  public async showBySlug({ params }: HttpContext) {
+    return await Event.findBy("slug", params.slug);
+  }
 }
