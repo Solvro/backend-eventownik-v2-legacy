@@ -22,6 +22,8 @@ const EventImportController = () =>
   import("#controllers/event_import_controller");
 const EventExportController = () =>
   import("#controllers/event_export_controller");
+const PublicParticipantsController = () =>
+  import("#controllers/public_participants_controller");
 
 router.get("/swagger", async () => {
   return AutoSwagger.default.docs(router.toJSON(), swagger);
@@ -32,6 +34,19 @@ router.get("/docs", async () => {
 
 router
   .group(() => {
+    router
+      .group(() => {
+        router
+          .get("participants/:participantSlug", [
+            PublicParticipantsController,
+            "index",
+          ])
+          .as("publicParticipants");
+      })
+      .prefix("events/:eventSlug")
+      .where("eventSlug", router.matchers.slug())
+      .use(middleware.participantAuth());
+
     router
       .group(() => {
         router.resource("admins", AdminsController).apiOnly();
