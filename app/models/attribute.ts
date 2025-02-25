@@ -29,13 +29,13 @@ export default class Attribute extends BaseModel {
   declare slug: string | null;
 
   @column()
-  declare eventId: number | null;
+  declare eventId: number;
+
+  @column({ serialize: (value) => JSON.parse(value as string) })
+  declare options: string | null;
 
   @column()
-  declare options: object | null;
-
-  @column()
-  declare type: string | null;
+  declare type: string;
 
   @column()
   declare rootBlockId: number | null;

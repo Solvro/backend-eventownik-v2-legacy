@@ -35,6 +35,9 @@ router.get("/docs", async () => {
 router
   .group(() => {
     router
+      .get("events/:eventSlug", [EventController, "publicShow"])
+      .where("eventSlug", router.matchers.slug());
+    router
       .group(() => {
         router
           .get("participants/:participantSlug", [
