@@ -16,7 +16,8 @@ import type {
 import Block from "#models/block";
 import Event from "#models/event";
 import Form from "#models/form";
-import ParticipantAttribute from "#models/participant_attribute";
+
+import Participant from "./participant.js";
 
 export default class Attribute extends BaseModel {
   @column({ isPrimary: true })
@@ -31,7 +32,7 @@ export default class Attribute extends BaseModel {
   @column()
   declare eventId: number;
 
-  @column({ serialize: (value) => JSON.parse(value as string) })
+  @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
   declare options: string | null;
 
   @column()
@@ -56,11 +57,12 @@ export default class Attribute extends BaseModel {
   })
   declare forms: ManyToMany<typeof Form>;
 
-  @manyToMany(() => ParticipantAttribute, {
+  @manyToMany(() => Participant, {
     pivotTable: "participant_attribute",
     pivotColumns: ["value"],
+    pivotTimestamps: true,
   })
-  declare participantAttributes: ManyToMany<typeof ParticipantAttribute>;
+  declare participantAttributes: ManyToMany<typeof Participant>;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
