@@ -14,10 +14,10 @@ export const createEventValidator = vine.compile(
     name: vine.string().maxLength(255),
     description: vine.string().nullable().optional(),
     organizer: vine.string().nullable().optional(),
-    slug: vine.string(),
+    slug: vine.string().nullable().optional(),
     // 2025-01-05 12:00:00
-    startDate: vine.date().optional().transform(dateTimeTransform), // 2025-01-05 12:00:00
-    endDate: vine.date().optional().transform(dateTimeTransform),
+    startDate: vine.date().transform(dateTimeTransform), // 2025-01-05 12:00:00
+    endDate: vine.date().transform(dateTimeTransform),
     lat: vine.number().nullable().optional(),
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
