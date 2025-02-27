@@ -2,6 +2,7 @@ import { unlinkSync } from "node:fs";
 
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
+import app from "@adonisjs/core/services/app";
 import db from "@adonisjs/lucid/services/db";
 
 import Event from "#models/event";
@@ -159,5 +160,29 @@ export default class EventController {
     await db.from("admin_permissions").where("event_id", event.id).delete();
     await event.delete();
     return { message: "Event successfully deleted" };
+  }
+
+  /**
+   * @downloadPhoto
+   * @operationId downloadPhoto
+   * @description Returns event photo
+   * @tag event
+   * @responseBody 200 - photo
+   * @responseBody 400 - { message: "Event doesn't have a photo" }
+   */
+  public async downloadPhoto({ params, response }: HttpContext) {
+    const eventId = +params.eventId;
+
+    const event = await Event.findOrFail(eventId);
+
+    if (event.photoUrl === null) {
+      return response.badRequest({
+        message: `Event ${eventId} doesn't have a photo`,
+      });
+    }
+
+    const photoPath = app.makePath(event.photoUrl);
+
+    return response.download(photoPath);
   }
 }

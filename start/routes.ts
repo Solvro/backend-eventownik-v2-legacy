@@ -75,6 +75,12 @@ router
 
     router
       .group(() => {
+        router.get("photo", [EventController, "downloadPhoto"]);
+      })
+      .prefix("events/:eventId");
+
+    router
+      .group(() => {
         router.post("login", [AuthController, "login"]);
         router.post("register", [AuthController, "register"]);
         router.get("me", [AuthController, "me"]).use(middleware.auth());
