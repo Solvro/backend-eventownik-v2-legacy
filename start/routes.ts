@@ -67,11 +67,20 @@ router
             // Otherwise, the words "export" and "import" will be treated as ids
             router.get("participants/export", [EventExportController]);
             router.post("participants/import", [EventImportController]);
-            router.resource("participants", ParticipantsController).apiOnly();
+            router
+              .resource("participants", ParticipantsController)
+              .apiOnly()
+              .except(["store"]);
           })
           .prefix("events/:eventId");
       })
       .use(middleware.auth());
+
+    router
+      .group(() => {
+        router.post("participants", [ParticipantsController, "store"]);
+      })
+      .prefix("events/:eventId");
 
     router
       .group(() => {
