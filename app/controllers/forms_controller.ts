@@ -10,7 +10,7 @@ export default class FormsController {
    * @operationId getForms
    * @description Returns an array of event forms
    * @tag forms
-   * @responseBody 200 - <Form[]>
+   * @responseBody 200 - <Form[]>.with(relations, attributes).exclude(event).paginated("data", "meta")
    */
   public async index({ params, request, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
@@ -20,6 +20,7 @@ export default class FormsController {
 
     return await Form.query()
       .where("event_id", eventId)
+      .preload("attributes")
       .paginate(page, perPage);
   }
 
@@ -29,9 +30,9 @@ export default class FormsController {
    * @description Creates a form for the specified event
    * @tag forms
    * @requestBody <createFormValidator>
-   * @returnBody 201 - <Form>
+   * @responseBody 201 - <Form>
    */
-  public async store({ params, request, bouncer }: HttpContext) {
+  public async store({ params, request, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
 
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
@@ -43,7 +44,12 @@ export default class FormsController {
 
     await form.related("attributes").attach(attributesIds);
 
-    return form;
+    return response.created(
+      await Form.query()
+        .where("id", form.id)
+        .andWhere("event_id", eventId)
+        .preload("attributes"),
+    );
   }
 
   /**
@@ -51,7 +57,7 @@ export default class FormsController {
    * @operationId getForm
    * @description Returns a form
    * @tag forms
-   * @responseBody 200 - <Form>
+   * @responseBody 200 - <Form>.with(relations, attributes).exclude(event)
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   public async show({ params, bouncer }: HttpContext) {
@@ -62,6 +68,7 @@ export default class FormsController {
     return await Form.query()
       .where("event_id", eventId)
       .where("id", formId)
+      .preload("attributes")
       .firstOrFail();
   }
 
