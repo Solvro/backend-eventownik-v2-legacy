@@ -2,11 +2,13 @@ import { unlinkSync } from "node:fs";
 
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
+import app from "@adonisjs/core/services/app";
 import db from "@adonisjs/lucid/services/db";
 
 import Event from "#models/event";
 import Permission from "#models/permission";
 import { PhotoService } from "#services/photo_service";
+import env from "#start/env";
 import { createEventValidator, updateEventValidator } from "#validators/event";
 
 @inject()
@@ -128,17 +130,18 @@ export default class EventController {
       await request.validateUsing(updateEventValidator);
 
     let photoUrl: string | null | undefined;
+    const photoStoragePath = env.get("PHOTO_STORAGE_URL", "public");
 
     if (photo !== undefined && photo !== null) {
       photoUrl = await this.photoService.storePhoto(photo);
 
       if (event.photoUrl !== null) {
-        unlinkSync(event.photoUrl);
+        unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
       }
     }
 
     if (photo === null && event.photoUrl !== null) {
-      unlinkSync(event.photoUrl);
+      unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
       photoUrl = null;
     }
 
