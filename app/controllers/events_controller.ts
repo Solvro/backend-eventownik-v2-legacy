@@ -1,4 +1,4 @@
-import { unlinkSync } from "node:fs";
+import { existsSync, unlinkSync } from "node:fs";
 
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
@@ -136,12 +136,16 @@ export default class EventController {
       photoUrl = await this.photoService.storePhoto(photo);
 
       if (event.photoUrl !== null) {
-        unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
+        if (existsSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`))) {
+          unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
+        }
       }
     }
 
     if (photo === null && event.photoUrl !== null) {
-      unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
+      if (existsSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`))) {
+        unlinkSync(app.makePath(`${photoStoragePath}/${event.photoUrl}`));
+      }
       photoUrl = null;
     }
 
