@@ -17,11 +17,12 @@ export class OrganizerService {
     const admin = await Admin.findBy("email", organizerData.email);
 
     if (admin !== null) {
-      organizerData.permissionsIds.forEach(async (permissionId) => {
-        await admin
-          .related("permissions")
-          .attach({ [permissionId]: { event_id: eventId } });
-      });
+      const transformedPermissions = this.transformPermissionsForAttach(
+        eventId,
+        organizerData.permissionsIds,
+      );
+
+      await admin.related("permissions").attach(transformedPermissions);
     } else {
       const newAdminData = await createAdminValidator.validate(organizerData);
 
@@ -51,15 +52,12 @@ export class OrganizerService {
       eventId,
     );
 
-    await organizer
-      .related("permissions")
-      .detach(organizer.permissions.map((permission) => permission.id));
+    const transformedPermissions = this.transformPermissionsForAttach(
+      eventId,
+      newPermissionsIds,
+    );
 
-    newPermissionsIds.forEach(async (permissionId) => {
-      await organizer
-        .related("permissions")
-        .attach({ [permissionId]: { event_id: eventId } });
-    });
+    await organizer.related("permissions").sync(transformedPermissions);
 
     const updatedOrganizer = await Admin.query()
       .where("id", organizerId)
@@ -78,5 +76,14 @@ export class OrganizerService {
     await organizer
       .related("permissions")
       .detach(organizer.permissions.map((permission) => permission.id));
+  }
+
+  transformPermissionsForAttach(eventId: number, permissionsIds: number[]) {
+    return Object.fromEntries(
+      permissionsIds.map((permissionId) => [
+        permissionId,
+        { event_id: eventId },
+      ]),
+    );
   }
 }
