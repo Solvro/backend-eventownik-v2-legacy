@@ -32,6 +32,7 @@ export const createEventValidator = vine.compile(
     lat: vine.number().nullable().optional(),
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
+    location: vine.string().nullable().optional(),
     participantsCount: vine.number().nullable().optional(),
     photo: vine
       .file({
@@ -73,6 +74,7 @@ export const updateEventValidator = vine.compile(
     lat: vine.number().nullable().optional(),
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
+    location: vine.string().nullable().optional(),
     participantsCount: vine.number().nullable().optional(),
     organizer: vine.string().nullable().optional(),
     photo: vine

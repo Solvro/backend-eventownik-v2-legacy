@@ -55,6 +55,9 @@ export default class Event extends BaseModel {
   declare organizer: string | null;
 
   @column()
+  declare location: string | null;
+
+  @column()
   declare participantsCount: number | null;
 
   @column.dateTime({ autoCreate: true })
