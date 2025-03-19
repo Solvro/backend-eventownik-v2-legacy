@@ -36,10 +36,16 @@ export default class Form extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
   declare startDate: DateTime;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime | null) => {
+      return value !== null ? value.toISO({ includeOffset: false }) : value;
+    },
+  })
   declare endDate: DateTime | null;
 
   @column.dateTime({ autoCreate: true })
