@@ -45,6 +45,8 @@ export class ParticipantService {
   ) {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
+    console.warn(participantAttributes);
+
     const participant = await Participant.query()
       .where("id", participantId)
       .andWhere("event_id", eventId)
@@ -52,6 +54,8 @@ export class ParticipantService {
 
     participant.merge(updates);
     await participant.save();
+
+    console.warn(participant);
 
     if (
       participantAttributes !== undefined &&
