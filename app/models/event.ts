@@ -2,12 +2,14 @@ import { DateTime } from "luxon";
 
 import {
   BaseModel,
+  belongsTo,
   column,
   hasMany,
   hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
 import type {
+  BelongsTo,
   HasMany,
   HasOne,
   ManyToMany,
@@ -17,6 +19,7 @@ import Email from "#models/email";
 import Form from "#models/form";
 
 import Admin from "./admin.js";
+import Attribute from "./attribute.js";
 import Participant from "./participant.js";
 import Permission from "./permission.js";
 
@@ -36,10 +39,14 @@ export default class Event extends BaseModel {
   @column()
   declare slug: string;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
   declare startDate: DateTime;
 
-  @column.dateTime()
+  @column.dateTime({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
   declare endDate: DateTime;
 
   @column()
@@ -50,6 +57,9 @@ export default class Event extends BaseModel {
 
   @column()
   declare primaryColor: string | null;
+
+  @column()
+  declare contactEmail: string | null;
 
   @column()
   declare organizer: string | null;
@@ -76,6 +86,11 @@ export default class Event extends BaseModel {
   })
   declare admins: ManyToMany<typeof Admin>;
 
+  @belongsTo(() => Admin, {
+    foreignKey: "organizerId",
+  })
+  declare mainOrganizer: BelongsTo<typeof Admin>;
+
   @manyToMany(() => Permission, {
     pivotTable: "admin_permissions",
     pivotColumns: ["admin_id"],
@@ -97,6 +112,9 @@ export default class Event extends BaseModel {
       query.where("is_first_form", true).preload("attributes"),
   })
   declare firstForm: HasOne<typeof Form>;
+
+  @hasMany(() => Attribute)
+  declare attributes: HasMany<typeof Attribute>;
 
   @column()
   declare socialMediaLinks: string[] | null;

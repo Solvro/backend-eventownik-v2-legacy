@@ -48,6 +48,7 @@ export default class FormsController {
     const event = await Event.query()
       .where("id", eventId)
       .preload("firstForm")
+      .preload("attributes")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
@@ -55,6 +56,7 @@ export default class FormsController {
     const { attributes, ...newFormData } =
       await request.validateUsing(createFormValidator);
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (newFormData.isFirstForm === true && event.firstForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
@@ -62,6 +64,20 @@ export default class FormsController {
     }
 
     const form = await event.related("forms").create(newFormData);
+
+    const eventAttributesIdsSet = new Set(
+      event.attributes.map((attribute) => attribute.id),
+    );
+
+    const attributesFromDifferentEvent = attributes.filter(
+      (attribute) => !eventAttributesIdsSet.has(attribute.id),
+    );
+
+    if (attributesFromDifferentEvent.length > 0) {
+      return response.badRequest({
+        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
+      });
+    }
 
     await form.related("attributes").attach(
       attributes.reduce(
@@ -131,6 +147,7 @@ export default class FormsController {
       await request.validateUsing(updateFormValidator);
 
     if (
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       event.firstForm !== null &&
       form.isFirstForm === false &&
       updates.isFirstForm === true
@@ -198,7 +215,7 @@ export default class FormsController {
    * @operationId submitForm
    * @description An endpoint to receive data from a form.<br>If this is the first form submission, send an email to create a participant.<br>For subsequent submissions, send a participantSlug.
    * @tag forms
-   * @requestBody <formSubmitValidator>
+   * @requestFormDataBody <formSubmitValidator>
    * @responseBody 201 - {}
    * @responseBody 200 - { missingRequiredFields: { id: number, name: string }[] }
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
@@ -209,15 +226,27 @@ export default class FormsController {
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
-    const formFields = await request.validateUsing(formSubmitValidator, {
-      meta: { eventId: event.id },
-    });
+    const { email, participantSlug, ...attributes } =
+      await request.validateUsing(formSubmitValidator, {
+        meta: { eventId: event.id },
+      });
 
-    const errorObject = await this.formService.submitForm(
-      eventSlug,
-      formId,
-      formFields,
+    // Transform attributes so that files work properly
+    const transformedAttributes = Object.fromEntries(
+      Object.entries(attributes).map(([key, value]) => {
+        if ((value as { isMultipartFile: boolean }).isMultipartFile) {
+          return [key, request.file(key)];
+        }
+
+        return [key, value];
+      }),
     );
+
+    const errorObject = await this.formService.submitForm(eventSlug, formId, {
+      email,
+      participantSlug,
+      ...transformedAttributes,
+    });
 
     if (errorObject !== undefined) {
       return response.status(errorObject.status).json(errorObject.error);
