@@ -52,6 +52,7 @@ export const createEventValidator = vine.compile(
     location: vine.string().nullable().optional(),
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),
+    contactEmail: vine.string().nullable().optional(),
     participantsCount: vine.number().nullable().optional(),
     photo: vine
       .file({
@@ -80,10 +81,11 @@ export const updateEventValidator = vine.compile(
     slug: vine
       .string()
       .unique(
-        async (db, value) =>
+        async (db, value, field) =>
           (await db
             .from("events")
             .where("slug", string.slug(value, { lower: true }))
+            .whereNot("id", +field.meta.eventId)
             .first()) === null,
       )
       .use(slugMinLength(3))
@@ -92,6 +94,7 @@ export const updateEventValidator = vine.compile(
     startDate: vine.date().transform(dateTimeTransform).optional(),
     endDate: vine.date().transform(dateTimeTransform).optional(),
     location: vine.string().nullable().optional(),
+    contactEmail: vine.string().nullable().optional(),
     lat: vine.number().nullable().optional(),
     long: vine.number().nullable().optional(),
     primaryColor: vine.string().nullable().optional(),

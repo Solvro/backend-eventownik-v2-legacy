@@ -3,6 +3,7 @@ import { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
 import Participant from "#models/participant";
+import { EmailService } from "#services/email_service";
 import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
@@ -19,7 +20,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
-   * @responseBody 200 - [{"id":32,"email":"test@test.pl","slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
+   * @responseBody 200 - [{"id":32,"email":"test@test.pl", "created_at":"yyyy-MM-dd HH:mm:ss", "slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
    */
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
@@ -43,6 +44,8 @@ export default class ParticipantsController {
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
         })),
+        created_at:
+          participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
       };
     });
 
@@ -77,7 +80,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com","firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com", "created_at":"yyyy-MM-dd HH:mm:ss", "firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
@@ -110,6 +113,8 @@ export default class ParticipantsController {
       id: participant.id,
       email: participant.email,
       slug: participant.slug,
+      created_at:
+        participant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
       attributes: participant.attributes.map((attribute) => ({
         id: attribute.id,
         name: attribute.name,
@@ -163,6 +168,8 @@ export default class ParticipantsController {
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
       })),
+      created_at:
+        updatedParticipant.createdAt?.toFormat("yyyy-MM-dd HH:mm:ss") ?? null,
     };
 
     return transformedUpdatedParticipant;
@@ -208,13 +215,13 @@ export default class ParticipantsController {
   async unregister({ params, response }: HttpContext) {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
-
     const event = await Event.findByOrFail("slug", eventSlug);
-
-    await Participant.query()
+    const participant = await Participant.query()
       .where("slug", participantSlug)
       .andWhere("event_id", event.id)
-      .delete();
+      .firstOrFail();
+    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+    await participant.delete();
 
     return response.noContent();
   }
