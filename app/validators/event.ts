@@ -45,9 +45,17 @@ export const createEventValidator = vine.compile(
       )
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true })),
-    // 2025-01-05 12:00:00
-    startDate: vine.date().transform(dateTimeTransform),
-    endDate: vine.date().transform(dateTimeTransform),
+    startDate: vine
+      .date({
+        formats: { format: "iso8601" },
+      })
+      .transform(dateTimeTransform),
+    endDate: vine
+      .date({
+        formats: { format: "iso8601" },
+      })
+      .transform(dateTimeTransform)
+      .optional(),
     lat: vine.number().nullable().optional(),
     location: vine.string().nullable().optional(),
     long: vine.number().nullable().optional(),
@@ -91,8 +99,18 @@ export const updateEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true }))
       .optional(),
-    startDate: vine.date().transform(dateTimeTransform).optional(),
-    endDate: vine.date().transform(dateTimeTransform).optional(),
+    startDate: vine
+      .date({
+        formats: { format: "iso8601" },
+      })
+      .transform(dateTimeTransform)
+      .optional(),
+    endDate: vine
+      .date({
+        formats: { format: "iso8601" },
+      })
+      .transform(dateTimeTransform)
+      .optional(),
     location: vine.string().nullable().optional(),
     contactEmail: vine.string().nullable().optional(),
     lat: vine.number().nullable().optional(),
