@@ -20,6 +20,7 @@ export default class EventExportController {
    * @summary Export participants
    * @operationId exportEventSpreadsheet
    * @description Returns file to download of spreadsheet with all participants of given :eventId
+   * @tag participants
    * @paramPath eventId - ID of the event to be exported - @type(number) @required
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404 },
