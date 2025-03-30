@@ -63,7 +63,7 @@ export default class EventExportController {
 
       sortedParticipants = sortedParticipants.filter(
         (participant) =>
-          participantsToFilter.findIndex((id) => id === participant.id) === -1,
+          participantsToFilter.findIndex((id) => id === participant.id) > -1,
       );
     }
 
