@@ -1,13 +1,12 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
-import Event from "#models/event";
 import Participant from "#models/participant";
-import { EmailService } from "#services/email_service";
 import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
+  unregisterManyParticipantsValidator,
 } from "#validators/participants";
 
 @inject()
@@ -203,16 +202,31 @@ export default class ParticipantsController {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
 
-    const event = await Event.findByOrFail("slug", eventSlug);
+    await this.participantService.unregister(participantSlug, eventSlug);
 
-    const participant = await Participant.query()
-      .where("slug", participantSlug)
-      .andWhere("event_id", event.id)
-      .firstOrFail();
+    return response.noContent();
+  }
 
-    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+  /**
+   * @unregisterMany
+   * @tag participants
+   * @summary Removes many participants from an event
+   * @description Removes many participants from an event
+   * @requestBody <unregisterManyParticipantsValidator>
+   * @responseBody 204 - {}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
+  async unregisterMany({ params, request, response }: HttpContext) {
+    const eventId = +params.eventId;
 
-    await participant.delete();
+    const { participantsToUnregisterIds } = await request.validateUsing(
+      unregisterManyParticipantsValidator,
+    );
+
+    await this.participantService.unregisterMany(
+      participantsToUnregisterIds,
+      eventId,
+    );
 
     return response.noContent();
   }
