@@ -80,7 +80,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes" : [{"id": 25,"name": "Sample Attribute","value": "sample value","slug": "sample-slug"}], "emails" : [ {"id": 1,"name":"Welcome Email","content":"Welcome to our event!","trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00", "status":"sent"} ])
+   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes": [{ "id": 25, "name": "Sample Attribute", "slug": "sample-slug", "value": "sample value" }], "emails": [{ "id": 1, "name": "Welcome Email", "content": "Welcome to our event!", "trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin", "sendAt": "2025-02-19T14:43:12.000+01:00", "status": "sent" }]
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
