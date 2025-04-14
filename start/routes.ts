@@ -107,8 +107,8 @@ router
 
     router
       .group(() => {
-        router.post("login", [AuthController, "login"]);
-        router.post("register", [AuthController, "register"]);
+        router.get("login", [AuthController, "login"]);
+        router.get("callback", [AuthController, "callback"]);
         router.get("me", [AuthController, "me"]).use(middleware.auth());
       })
       .prefix("auth");

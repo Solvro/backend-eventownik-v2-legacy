@@ -41,6 +41,7 @@
     "strtok3": "8.0.1"
   },
   "dependencies": {
+    "@adonisjs/ally": "^5.1.0",
     "@adonisjs/auth": "^9.3.0",
     "@adonisjs/bouncer": "^3.1.4",
     "@adonisjs/core": "^6.14.1",
@@ -49,6 +50,7 @@
     "@adonisjs/mail": "^9.2.2",
     "@adonisjs/static": "^1.1.1",
     "@outloud/adonis-autoswagger": "^1.8.7",
+    "@solvro/auth": "^1.2.7",
     "@vinejs/vine": "^2.1.0",
     "adonis-autoswagger": "^3.66.0",
     "exceljs": "^4.4.0",

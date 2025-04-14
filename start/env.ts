@@ -44,4 +44,13 @@ export default await Env.create(new URL("../", import.meta.url), {
   SMTP_PORT: Env.schema.string(),
   SMTP_USERNAME: Env.schema.string(),
   SMTP_PASSWORD: Env.schema.string(),
+
+  /*
+  |----------------------------------------------------------
+  | Variables for @solvro/auth
+  |----------------------------------------------------------
+  */
+  CALLBACK_URL: Env.schema.string(),
+  SOLVRO_AUTH_CLIENT_ID: Env.schema.string(),
+  SOLVRO_AUTH_CLIENT_SECRET: Env.schema.string(),
 });

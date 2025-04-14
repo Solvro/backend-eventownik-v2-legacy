@@ -1,4 +1,5 @@
 import assert from "node:assert";
+import crypto from "node:crypto";
 
 import type { HttpContext } from "@adonisjs/core/http";
 
@@ -29,6 +30,13 @@ export default class AuthController {
   }
 
   /**
+   * Generate a random password string
+   */
+  private generateRandomPassword(length = 16): string {
+    return crypto.randomBytes(length).toString("hex").slice(0, length);
+  }
+
+  /**
    * @login
    * @operationId loginAdmin
    * @description Enables login. Default method is token authorization. Support rememberMe functionality. If rememberMe is set to true then token expires in 30 days, otherwise in 24h.
@@ -55,6 +63,36 @@ export default class AuthController {
     };
   }
 
+  async redirect(ctx: HttpContext) {
+    const driver = ctx.ally.use("solvroAuth");
+
+    return driver.getRedirectUrl();
+  }
+
+  async callback(ctx: HttpContext) {
+    const driver = ctx.ally.use("solvroAuth");
+
+    const details = await driver.user();
+
+    assert(details.email !== null, "Invalid user profile. Email is missing");
+
+    const user = await Admin.firstOrCreate(
+      { email: details.email },
+      {
+        email: details.email,
+        firstName: details.name,
+        lastName: details.nickName,
+        active: true,
+        password: this.generateRandomPassword(),
+      },
+    );
+
+    const accessToken = await Admin.accessTokens.create(user);
+
+    return {
+      accessToken,
+    };
+  }
   /**
    * @me
    * @operationId authenticatedAdmin
