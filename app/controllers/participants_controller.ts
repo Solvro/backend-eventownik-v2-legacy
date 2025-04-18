@@ -154,6 +154,7 @@ export default class ParticipantsController {
       {
         meta: {
           eventId,
+          participantId,
         },
       },
     );
