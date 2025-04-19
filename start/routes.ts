@@ -42,6 +42,10 @@ router
         router
           .get("forms/:formSlug", [FormsController, "showBySlug"])
           .where("formSlug", router.matchers.slug());
+        router.get("attributes/:attributeId/blocks", [
+          BlocksController,
+          "index",
+        ]);
         router
           .group(() => {
             router
@@ -67,7 +71,10 @@ router
             router.resource("attributes", AttributesController).apiOnly();
             router
               .group(() => {
-                router.resource("blocks", BlocksController).apiOnly();
+                router
+                  .resource("blocks", BlocksController)
+                  .apiOnly()
+                  .except(["index"]);
                 router.put("bulk-update", [
                   ParticipantsAttributesController,
                   "bulkUpdate",
