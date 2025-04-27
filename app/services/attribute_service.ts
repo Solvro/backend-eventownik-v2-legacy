@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 
 import Attribute from "#models/attribute";
+import Block from "#models/block";
 
 import {
   CreateAttributeDTO,
@@ -72,21 +73,21 @@ export class AttributeService {
 
     const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
 
-    if (updatedAttribute.type === "block") {
-      await this.blockService.createRootBlock(updatedAttribute.id);
-    } else if (previousType === "block") {
+    if (previousType === "block") {
       await updatedAttribute.load("rootBlock");
 
-      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      if (updatedAttribute.rootBlock !== null) {
+      if (updatedAttribute.type !== "block") {
         await updatedAttribute.rootBlock.delete();
       }
+    } else if (updatedAttribute.type === "block") {
+      await this.blockService.createRootBlock(updatedAttribute.id);
     }
 
     return await this.getEventAttribute(eventId, attributeId);
   }
 
   async deleteAttribute(eventId: number, attributeId: number) {
+    await Block.query().where("attribute_id", attributeId).delete();
     await Attribute.query()
       .where("event_id", eventId)
       .andWhere("id", attributeId)
