@@ -1,9 +1,17 @@
+import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Attribute from "#models/attribute";
 import Block from "#models/block";
+import Event from "#models/event";
+import { BlockService } from "#services/block_service";
 import { createBlockValidator, updateBlockValidator } from "#validators/block";
 
+@inject()
 export default class BlocksController {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private blockService: BlockService) {}
+
   /**
    * @index
    * @operationId getBlocks
@@ -11,12 +19,30 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
+  async index({ params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
 
-  async index({ request }: HttpContext) {
-    return await Block.query().paginate(
-      request.input("page", 1) | 1,
-      request.input("perPage", 10) | 10,
-    );
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+
+    return await this.blockService.getBlockTree(attributeId);
+  }
+
+  /**
+   * @publicIndex
+   * @operationId publicGetBlocks
+   * @description Return a list of all blocks.
+   * @tag blocks
+   * @responseBody 200 - <Block[]>.paginated()
+   */
+  async publicIndex({ params }: HttpContext) {
+    const event = await Event.findByOrFail("slug", params.eventSlug);
+    const attribute = await Attribute.query()
+      .where("event_id", event.id)
+      .where("id", +params.attributeId)
+      .firstOrFail();
+
+    return await this.blockService.getBlockTree(attribute.id);
   }
 
   /**
@@ -27,14 +53,31 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
+  async show({ params, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
 
-  async show({ params }: HttpContext) {
-    const block = await Block.findOrFail(params.id);
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
-    await block.load("parent");
-    await block.load("children");
+    const block = await Block.query()
+      .where("id", blockId)
+      .where("attribute_id", attributeId)
+      .preload("parent")
+      .preload("children")
+      .preload("attribute")
+      .firstOrFail();
 
-    return block;
+    let participantsInBlock;
+
+    if (block.capacity !== null) {
+      participantsInBlock = await this.blockService.getBlockParticipants(
+        attributeId,
+        blockId,
+      );
+    }
+
+    return { ...block.serialize(), participantsInBlock };
   }
 
   /**
@@ -46,10 +89,15 @@ export default class BlocksController {
    * @requestBody <createBlockValidator>
    * @responseBody 201 - <Block>
    */
+  async store({ request, params, response, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
 
-  async store({ request, response }: HttpContext) {
-    const data = await createBlockValidator.validate(request.all());
-    const block = await Block.create(data);
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+
+    const data = await request.validateUsing(createBlockValidator);
+
+    const block = await Block.create({ ...data, attributeId });
 
     return response.created(block);
   }
@@ -63,11 +111,22 @@ export default class BlocksController {
    * @responseBody 200 - <Block>
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
+  async update({ params, request, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
 
-  async update({ params, request }: HttpContext) {
-    const data = await updateBlockValidator.validate(request.all());
-    const block = await Block.findOrFail(params.id);
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+
+    const data = await request.validateUsing(updateBlockValidator);
+
+    const block = await Block.query()
+      .where("id", blockId)
+      .andWhere("attribute_id", attributeId)
+      .firstOrFail();
+
     block.merge(data);
+
     await block.save();
 
     return block;
@@ -81,11 +140,17 @@ export default class BlocksController {
    * @responseBody 204 - No content
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
+  async destroy({ params, response, bouncer }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
+    const blockId = +params.id;
 
-  async destroy({ params, response }: HttpContext) {
-    const block = await Block.findOrFail(params.id);
-    await block.delete();
-    await block.related("children").query().delete();
+    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+
+    await Block.query()
+      .where("id", blockId)
+      .andWhere("attribute_id", attributeId)
+      .delete();
 
     return response.noContent();
   }

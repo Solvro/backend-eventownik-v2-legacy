@@ -7,6 +7,7 @@ import mail from "@adonisjs/mail/services/main";
 import Email from "#models/email";
 import Event from "#models/event";
 import Participant from "#models/participant";
+import env from "#start/env";
 
 import { EmailTriggerType } from "../types/trigger_types.js";
 
@@ -16,7 +17,7 @@ export class EmailService {
     participant: Participant,
     trigger: EmailTriggerType,
     triggerValue?: string | number, // used for example as attribute id in trigger attribute_changed
-    triggerValue2?: string, // used for example as attribute value in trigger attribute_changed
+    triggerValue2?: string | null, // used for example as attribute value in trigger attribute_changed
   ) {
     const email = await Email.query()
       .where("event_id", event.id)
@@ -42,6 +43,7 @@ export class EmailService {
     email: Email,
     sendBy = "system",
   ) {
+    await email.load("form");
     await participant
       .related("emails")
       .attach({ [email.id]: { status: "pending", send_by: sendBy } });
@@ -72,6 +74,7 @@ export class EmailService {
     message: Message,
   ) {
     const content = email.content;
+    const { form } = email;
     let parsedContent = content
       .replace(/\/event_name/g, event.name)
       .replace(
@@ -108,6 +111,13 @@ export class EmailService {
           return `cid:${cid}`;
         },
       );
+
+    if (form !== null) {
+      parsedContent = parsedContent.replace(
+        /\/form_url/g,
+        `${env.get("APP_DOMAIN")}/${event.slug}/${form.slug}/${participant.slug}`,
+      );
+    }
 
     for (const attribute of participant.attributes) {
       parsedContent = parsedContent.replace(

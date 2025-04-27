@@ -5,6 +5,7 @@ import Attribute from "#models/attribute";
 import Event from "#models/event";
 import Participant from "#models/participant";
 import { FileService } from "#services/file_service";
+import { participantBulkUpdateValidator } from "#validators/participant_attributes";
 
 @inject()
 export default class ParticipantsAttributesController {
@@ -58,5 +59,37 @@ export default class ParticipantsAttributesController {
     } else {
       response.notFound({ message: "Attribute doesn't have a file" });
     }
+  }
+
+  async bulkUpdate({ params, request, bouncer, response }: HttpContext) {
+    const eventId = +params.eventId;
+    const attributeId = +params.attributeId;
+    const { newValue, participantIds } = await request.validateUsing(
+      participantBulkUpdateValidator,
+      {
+        meta: {
+          eventId,
+        },
+      },
+    );
+
+    await bouncer.authorize(
+      "manage_participant",
+      await Event.findOrFail(eventId),
+    );
+
+    const updatedParticipantAttributes = participantIds.reduce<
+      Record<number, { value: string }>
+    >((acc, id) => {
+      acc[id] = { value: newValue };
+      return acc;
+    }, {});
+
+    const attribute = await Attribute.findOrFail(attributeId);
+    await attribute
+      .related("participantAttributes")
+      .sync(updatedParticipantAttributes, false);
+
+    return response.noContent();
   }
 }

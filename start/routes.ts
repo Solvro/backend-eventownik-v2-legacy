@@ -38,6 +38,10 @@ router
   .group(() => {
     router
       .group(() => {
+        router.get("attributes/:attributeId/blocks", [
+          BlocksController,
+          "publicIndex",
+        ]);
         router.get("", [EventController, "publicShow"]);
         router
           .get("forms/:formSlug", [FormsController, "showBySlug"])
@@ -65,7 +69,15 @@ router
         router
           .group(() => {
             router.resource("attributes", AttributesController).apiOnly();
-            router.resource("blocks", BlocksController).apiOnly();
+            router
+              .group(() => {
+                router.resource("blocks", BlocksController).apiOnly();
+                router.put("bulk-update", [
+                  ParticipantsAttributesController,
+                  "bulkUpdate",
+                ]);
+              })
+              .prefix("attributes/:attributeId");
             router.resource("emails", EmailsController).apiOnly();
             router.post("emails/send/:emailId", [EmailsController, "send"]);
             router.post("emails/duplicate/:emailId", [
@@ -88,7 +100,8 @@ router
             ]);
             router.resource("participants", ParticipantsController).apiOnly();
           })
-          .prefix("events/:eventId");
+          .prefix("events/:eventId")
+          .where("eventId", router.matchers.number());
       })
       .use(middleware.auth());
 

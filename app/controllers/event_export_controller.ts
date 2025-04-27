@@ -7,6 +7,7 @@ import type { HttpContext } from "@adonisjs/core/http";
 import app from "@adonisjs/core/services/app";
 
 import Event from "#models/event";
+import Participant from "#models/participant";
 import { AttributeService } from "#services/attribute_service";
 import env from "#start/env";
 
@@ -22,10 +23,11 @@ export default class EventExportController {
    * @description Returns file to download of spreadsheet with all participants of given :eventId
    * @tag participants
    * @paramPath eventId - ID of the event to be exported - @type(number) @required
+   * @paramQuery ids - Users to only include in export file - @type(number[].join(",")) @example(?ids=2, or ?ids=3,4)
    * @responseBody 200 - file:xlsx - Spreadsheet download with xlsx extension
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404 },
    */
-  public async handle({ params, response }: HttpContext) {
+  public async handle({ params, response, request }: HttpContext) {
     const event = await Event.query()
       .where("id", +params.eventId)
       .preload("participants", async (participants) => {
@@ -48,9 +50,27 @@ export default class EventExportController {
       ...attributesColumns,
     ];
 
-    const sortedParticipants = event.participants.sort(
+    const queryParams = request.qs();
+
+    let sortedParticipants = event.participants.sort(
       (p1, p2) => p1.id - p2.id,
-    );
+    ) as Participant[];
+
+    if (queryParams.ids !== undefined) {
+      const participantsToFilter = (
+        typeof queryParams.ids === "string"
+          ? queryParams.ids.split(",")
+          : (queryParams.ids as string[])
+      )
+        .filter((v) => v.trim() !== "")
+        .map((v) => Number(v))
+        .filter((v) => !Number.isNaN(v));
+
+      sortedParticipants = sortedParticipants.filter(
+        (participant) =>
+          participantsToFilter.findIndex((id) => id === participant.id) > -1,
+      );
+    }
 
     sheet.getColumn("participants_id").values = ["ID"].concat(
       sortedParticipants.map((participant) => participant.id.toString()),
@@ -72,7 +92,7 @@ export default class EventExportController {
         if (foundAttribute !== undefined) {
           attributeValues.push(foundAttribute.$extras.pivot_value as string);
         } else {
-          attributeValues.push("undefined");
+          attributeValues.push("N/A");
         }
       }
 
