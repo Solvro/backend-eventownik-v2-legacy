@@ -1,6 +1,7 @@
 import { inject } from "@adonisjs/core";
 import type { HttpContext } from "@adonisjs/core/http";
 
+import Attribute from "#models/attribute";
 import Block from "#models/block";
 import Event from "#models/event";
 import { BlockService } from "#services/block_service";
@@ -18,13 +19,12 @@ export default class BlocksController {
    * @tag blocks
    * @responseBody 200 - <Block[]>.paginated()
    */
-  async index({ params, bouncer }: HttpContext) {
-    const eventId = +params.eventId;
-    const attributeId = +params.attributeId;
+  async index({ params }: HttpContext) {
+    const attributeSlug = params.attributeSlug as string;
 
-    await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
+    const attribute = await Attribute.findByOrFail("slug", attributeSlug);
 
-    return await this.blockService.getBlockTree(attributeId);
+    return await this.blockService.getBlockTree(attribute.id);
   }
 
   /**

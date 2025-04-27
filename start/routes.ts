@@ -42,10 +42,9 @@ router
         router
           .get("forms/:formSlug", [FormsController, "showBySlug"])
           .where("formSlug", router.matchers.slug());
-        router.get("attributes/:attributeId/blocks", [
-          BlocksController,
-          "index",
-        ]);
+        router
+          .get("attributes/:attributeSlug/blocks", [BlocksController, "index"])
+          .where("attributeSlug", router.matchers.slug());
         router
           .group(() => {
             router
