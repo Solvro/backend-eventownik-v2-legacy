@@ -24,7 +24,8 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string }> = {};
+      const transformedAttributes: Record<number, { value: string | null }> =
+        {};
 
       for (const attribute of participantAttributes) {
         await EmailService.sendOnTrigger(
@@ -74,7 +75,8 @@ export class ParticipantService {
       participantAttributes !== undefined &&
       participantAttributes.length > 0
     ) {
-      const transformedAttributes: Record<number, { value: string }> = {};
+      const transformedAttributes: Record<number, { value: string | null }> =
+        {};
 
       for (const attribute of participantAttributes) {
         await EmailService.sendOnTrigger(
@@ -106,5 +108,32 @@ export class ParticipantService {
       .firstOrFail();
 
     return updatedParticipant;
+  }
+
+  async unregister(participantSlug: string, eventSlug: string) {
+    const event = await Event.findByOrFail("slug", eventSlug);
+
+    const participant = await Participant.query()
+      .where("slug", participantSlug)
+      .andWhere("event_id", event.id)
+      .firstOrFail();
+
+    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+
+    await participant.delete();
+  }
+
+  async unregisterMany(participantsToUnregisterIds: number[], eventId: number) {
+    const event = await Event.findOrFail(+eventId);
+
+    const participants = await Participant.query()
+      .whereIn("id", participantsToUnregisterIds)
+      .andWhere("event_id", event.id);
+
+    await Promise.all(
+      participants.map((participant) =>
+        this.unregister(participant.slug, event.slug),
+      ),
+    );
   }
 }

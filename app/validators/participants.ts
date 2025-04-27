@@ -7,7 +7,7 @@ export const participantsStoreValidator = vine.compile(
       .array(
         vine.object({
           attributeId: vine.number(),
-          value: vine.string(),
+          value: vine.string().nullable(),
         }),
       )
       .optional(),
@@ -21,9 +21,15 @@ export const participantsUpdateValidator = vine.compile(
       .array(
         vine.object({
           attributeId: vine.number(),
-          value: vine.string(),
+          value: vine.string().nullable(),
         }),
       )
       .optional(),
+  }),
+);
+
+export const unregisterManyParticipantsValidator = vine.compile(
+  vine.object({
+    participantsToUnregisterIds: vine.array(vine.number()).minLength(1),
   }),
 );

@@ -1,11 +1,19 @@
+import { inject } from "@adonisjs/core";
+
 import Attribute from "#models/attribute";
+import Block from "#models/block";
 
 import {
   CreateAttributeDTO,
   UpdateAttributeDTO,
 } from "../types/attribute_types.js";
+import { BlockService } from "./block_service.js";
 
+@inject()
 export class AttributeService {
+  // eslint-disable-next-line no-useless-constructor
+  constructor(private blockService: BlockService) {}
+
   async getEventAttributes(eventId: number) {
     const attributes = await Attribute.findManyBy("event_id", eventId);
 
@@ -32,6 +40,10 @@ export class AttributeService {
       options: optionsJSON,
     });
 
+    if (newAttribute.type === "block") {
+      await this.blockService.createRootBlock(newAttribute.id);
+    }
+
     return newAttribute;
   }
 
@@ -44,6 +56,8 @@ export class AttributeService {
       eventId,
       attributeId,
     );
+
+    const previousType = attributeToUpdate.type;
 
     const optionsJSON: string | undefined =
       updates.options !== undefined
@@ -59,10 +73,21 @@ export class AttributeService {
 
     const updatedAttribute = await this.getEventAttribute(eventId, attributeId);
 
-    return updatedAttribute;
+    if (previousType === "block") {
+      await updatedAttribute.load("rootBlock");
+
+      if (updatedAttribute.type !== "block") {
+        await updatedAttribute.rootBlock.delete();
+      }
+    } else if (updatedAttribute.type === "block") {
+      await this.blockService.createRootBlock(updatedAttribute.id);
+    }
+
+    return await this.getEventAttribute(eventId, attributeId);
   }
 
   async deleteAttribute(eventId: number, attributeId: number) {
+    await Block.query().where("attribute_id", attributeId).delete();
     await Attribute.query()
       .where("event_id", eventId)
       .andWhere("id", attributeId)

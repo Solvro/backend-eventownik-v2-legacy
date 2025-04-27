@@ -21,6 +21,12 @@ export default class Block extends BaseModel {
   @column()
   declare capacity: number | null;
 
+  @column()
+  declare isRootBlock: boolean;
+
+  @column()
+  declare attributeId: number;
+
   @hasMany(() => Block, {
     foreignKey: "parentId",
   })
@@ -39,4 +45,6 @@ export default class Block extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  serializeExtras = true;
 }

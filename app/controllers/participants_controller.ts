@@ -1,13 +1,12 @@
 import { inject } from "@adonisjs/core";
 import { HttpContext } from "@adonisjs/core/http";
 
-import Event from "#models/event";
 import Participant from "#models/participant";
-import { EmailService } from "#services/email_service";
 import { ParticipantService } from "#services/participant_service";
 import {
   participantsStoreValidator,
   participantsUpdateValidator,
+  unregisterManyParticipantsValidator,
 } from "#validators/participants";
 
 @inject()
@@ -81,7 +80,7 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - {"id": 1,"email":"john.doe@example.com", "created_at":"yyyy-MM-dd HH:mm:ss", "firstName": "John","lastName": "Doe","slug":"some-unique-slug","createdAt": "2025-02-18T00:56:06.115+01:00","updatedAt": "2025-02-18T00:56:06.115+01:00","emails":[{"id": 1,"name":"Welcome Email","content":"Welcome to our event!","participantEmails":{"status":"sent","sendBy": "admin","sendAt": "2025-02-19T14:43:12.000+01:00"}         }     ] }
+   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes": [{ "id": 25, "name": "Sample Attribute", "slug": "sample-slug", "value": "sample value" }], "emails": [{ "id": 1, "name": "Welcome Email", "content": "Welcome to our event!", "trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin", "sendAt": "2025-02-19T14:43:12.000+01:00", "status": "sent" }]
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
@@ -98,10 +97,7 @@ export default class ParticipantsController {
       .where("id", +params.id)
       .andWhere("event_id", +params.eventId)
       .preload("attributes", (attributesQuery) =>
-        attributesQuery
-          .select("id", "name", "slug")
-          .pivotColumns(["value"])
-          .where("show_in_list", true),
+        attributesQuery.select("id", "name", "slug").pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
         emailsQuery
@@ -206,16 +202,31 @@ export default class ParticipantsController {
     const eventSlug = params.eventSlug as string;
     const participantSlug = params.participantSlug as string;
 
-    const event = await Event.findByOrFail("slug", eventSlug);
+    await this.participantService.unregister(participantSlug, eventSlug);
 
-    const participant = await Participant.query()
-      .where("slug", participantSlug)
-      .andWhere("event_id", event.id)
-      .firstOrFail();
+    return response.noContent();
+  }
 
-    await EmailService.sendOnTrigger(event, participant, "participant_deleted");
+  /**
+   * @unregisterMany
+   * @tag participants
+   * @summary Removes many participants from an event
+   * @description Removes many participants from an event
+   * @requestBody <unregisterManyParticipantsValidator>
+   * @responseBody 204 - {}
+   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
+   */
+  async unregisterMany({ params, request, response }: HttpContext) {
+    const eventId = +params.eventId;
 
-    await participant.delete();
+    const { participantsToUnregisterIds } = await request.validateUsing(
+      unregisterManyParticipantsValidator,
+    );
+
+    await this.participantService.unregisterMany(
+      participantsToUnregisterIds,
+      eventId,
+    );
 
     return response.noContent();
   }
