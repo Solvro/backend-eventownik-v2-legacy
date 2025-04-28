@@ -65,6 +65,11 @@ export default class ParticipantsController {
 
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
+      {
+        meta: {
+          eventId,
+        },
+      },
     );
 
     const participant = await this.participantService.createParticipant(
@@ -146,6 +151,12 @@ export default class ParticipantsController {
 
     const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
+      {
+        meta: {
+          eventId,
+          participantId,
+        },
+      },
     );
 
     const updatedParticipant = await this.participantService.updateParticipant(

@@ -71,8 +71,25 @@ export class FormService {
       attribute.id.toString(),
     );
 
+    let participant: Participant | null = null;
+
+    if (participantSlug !== undefined) {
+      participant = await Participant.findByOrFail("slug", participantSlug);
+
+      await participant.load("attributes", (q) => {
+        void q.pivotColumns(["value"]);
+        void q.whereIn("attributes.id", allowedFieldsIds);
+      });
+    }
+
     const missingRequiredFields = form.attributes
-      .filter((attribute) => attribute.$extras.pivot_is_required === true)
+      .filter(
+        (attribute): boolean =>
+          attribute.$extras.pivot_is_required === true &&
+          !(
+            participant?.attributes.some((x) => x.id === attribute.id) ?? false
+          ),
+      )
       .filter((attribute) => !(attribute.id in attributes))
       .map((attribute) => ({
         id: attribute.id,
@@ -90,7 +107,11 @@ export class FormService {
 
     const transformedFormFields = await Promise.all(
       Object.entries(formFields).map(async ([attributeId, value]) => {
-        if (fileAttributesIds.has(+attributeId)) {
+        if (
+          fileAttributesIds.has(+attributeId) &&
+          value !== null &&
+          value !== "null"
+        ) {
           const fileName = await this.fileService.storeFile(
             value as MultipartFile,
           );
@@ -103,7 +124,11 @@ export class FormService {
             attributeId: +attributeId,
             value: fileName,
           };
-        } else if (blockAttributesIds.has(+attributeId)) {
+        } else if (
+          blockAttributesIds.has(+attributeId) &&
+          value !== null &&
+          value !== "null"
+        ) {
           const canSignInToBlock = await this.blockService.canSignInToBlock(
             +attributeId,
             +(value as string),
@@ -116,19 +141,16 @@ export class FormService {
 
         return {
           attributeId: +attributeId,
-          value: value as string,
+          value: value as string | null,
         };
       }),
     );
 
     if (participantEmail !== undefined) {
-      const participant = await this.participantService.createParticipant(
-        event.id,
-        {
-          email: participantEmail,
-          participantAttributes: transformedFormFields,
-        },
-      );
+      participant = await this.participantService.createParticipant(event.id, {
+        email: participantEmail,
+        participantAttributes: transformedFormFields,
+      });
       await EmailService.sendOnTrigger(
         event,
         participant,
@@ -136,10 +158,7 @@ export class FormService {
         form.id,
       );
     } else if (participantSlug !== undefined) {
-      const participant = await Participant.findByOrFail(
-        "slug",
-        participantSlug,
-      );
+      participant = await Participant.findByOrFail("slug", participantSlug);
       await this.participantService.updateParticipant(
         event.id,
         participant.id,

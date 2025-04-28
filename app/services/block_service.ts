@@ -1,3 +1,5 @@
+import string from "@adonisjs/core/helpers/string";
+
 import Attribute from "#models/attribute";
 import Block from "#models/block";
 import Participant from "#models/participant";
@@ -6,31 +8,54 @@ export class BlockService {
   async getBlockTree(attributeId: number) {
     const blockAttribute = await Attribute.query()
       .where("id", attributeId)
-      .preload("rootBlock")
+      .preload("rootBlock", (q) => q.preload("attribute"))
       .firstOrFail();
 
     const rootBlock = blockAttribute.rootBlock;
 
-    const blockTree = await this.loadBlockTree(rootBlock);
+    const blockTree = await this.loadBlockTree(
+      rootBlock,
+      String(rootBlock.attribute.options).split(","),
+    );
 
     return blockTree;
   }
 
-  async loadBlockTree(block: Block) {
+  async loadBlockTree(block: Block, participantFields: string[]) {
     await block.load("children");
 
-    await Promise.all(block.children.map((child) => this.loadBlockTree(child)));
+    await Promise.all(
+      block.children.map((child) =>
+        this.loadBlockTree(child, participantFields),
+      ),
+    );
 
-    let participantsInBlockCount;
+    const participants = await Participant.query()
+      .whereHas("attributes", (query) => {
+        void query.where("attributes.id", block.attributeId);
+        void query.where("participant_attributes.value", block.id);
+      })
+      .preload("attributes", (q) => {
+        void q.whereIn("slug", participantFields);
+        void q.pivotColumns(["value"]);
+      });
 
-    if (block.capacity !== null) {
-      participantsInBlockCount = await this.getBlockParticipantsCount(
-        block.attributeId,
-        block.id,
-      );
+    block.$extras.participants = participants.map(
+      (participant: Participant) => {
+        return {
+          id: participant.id,
+          email: participant.email,
+          name: (participant?.attributes ?? []).reduce(
+            (a: string, b) => `${a} ${b.$extras.pivot_value ?? ""}`,
+            "",
+          ),
+        };
+      },
+    );
 
-      block.$extras.participantsInBlockCount = participantsInBlockCount;
-    }
+    block.$extras.participantsInBlockCount = (
+      block.$extras.participants as Participant[]
+    ).length;
 
     return block;
   }
@@ -72,6 +97,29 @@ export class BlockService {
       blockId,
     );
 
-    return block.capacity !== null && block.capacity > blockParticipantsCount;
+    return (
+      block.capacity === null ||
+      block.capacity === 0 ||
+      block.capacity > blockParticipantsCount
+    );
+  }
+
+  async createRootBlock(attributeId: number) {
+    const attribute = await Attribute.query()
+      .where("id", attributeId)
+      .preload("rootBlock")
+      .firstOrFail();
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (attribute.rootBlock !== null) {
+      await attribute.rootBlock.delete();
+    }
+
+    await attribute.related("blocks").create({
+      name: string.slug(`${attribute.slug ?? attribute.name}-root-block`, {
+        lower: true,
+      }),
+      isRootBlock: true,
+    });
   }
 }
