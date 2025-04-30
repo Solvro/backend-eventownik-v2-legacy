@@ -30,6 +30,10 @@ export class BlockService {
       ),
     );
 
+    block.children.sort(
+      (a, b) => a.createdAt.toMillis() - b.createdAt.toMillis(),
+    );
+
     const participants = await Participant.query()
       .whereHas("attributes", (query) => {
         void query.where("attributes.id", block.attributeId);
