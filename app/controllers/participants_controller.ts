@@ -24,11 +24,8 @@ export default class ParticipantsController {
    */
   async index({ params, request }: HttpContext) {
     const paramAttributes = request.qs().bonus_attributes || "";
-    console.log("bonus_attributes", paramAttributes);
 
     const bonusAttributes = paramAttributes ? paramAttributes.split(",") : [];
-
-    console.log("bonusAttribures", bonusAttributes);
 
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
