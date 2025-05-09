@@ -23,9 +23,10 @@ export default class ParticipantsController {
    * @responseBody 200 - <Participant[]>.exclude(eventId, updatedAt).append("attributes": [{ "id": 2, "name": "test", "slug": "test","value": "Lorem Ipsum" }])
    */
   async index({ params, request }: HttpContext) {
-    const paramAttributes = request.qs().bonus_attributes || "";
+    const paramAttributes = request.qs().bonus_attributes as string | undefined;
 
-    const bonusAttributes = paramAttributes ? paramAttributes.split(",") : [];
+    const bonusAttributes: string[] =
+      typeof paramAttributes === "string" ? paramAttributes.split(",") : [];
 
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
