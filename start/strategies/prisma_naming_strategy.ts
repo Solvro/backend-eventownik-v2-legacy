@@ -21,7 +21,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
     model: LucidModel,
     __: LucidModel,
   ): string {
-    return string.camelCase(model.name + model.primaryKey);
+    return string.camelCase(`${model.name}_${model.primaryKey}`);
   }
 
   relationForeignKey(
@@ -29,7 +29,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
     __: LucidModel,
     relatedModel: LucidModel,
   ): string {
-    return string.camelCase(relatedModel.name + relatedModel.primaryKey);
+    return string.camelCase(`${relatedModel.name}_${relatedModel.primaryKey}`);
   }
 
   relationPivotTable(
@@ -41,7 +41,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
   }
 
   relationPivotForeignKey(_: "manyToMany", model: LucidModel): string {
-    return string.camelCase(model.name + model.primaryKey);
+    return string.camelCase(`${model.name}_${model.primaryKey}`);
   }
 
   paginationMetaKeys(): {
