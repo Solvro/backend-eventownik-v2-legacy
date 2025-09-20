@@ -47,8 +47,10 @@ export default class Event extends BaseModel {
   })
   declare endDate: DateTime;
 
-  @column()
-  declare lat: number | null;
+  @column.dateTime({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
+  declare verifiedAt: DateTime;
 
   @column()
   declare long: number | null;
@@ -60,7 +62,7 @@ export default class Event extends BaseModel {
   declare contactEmail: string | null;
 
   @column()
-  declare organizer: string | null;
+  declare organizerName: string | null;
 
   @column()
   declare participantsCount: number | null;
@@ -77,21 +79,33 @@ export default class Event extends BaseModel {
   @column()
   declare photoUrl: string | null;
 
+  @column()
+  declare policyLinks: string[] | null;
+
+  @column()
+  declare links: string[] | null;
+
+  @column()
+  declare termsLink: string | null;
+
+  @column()
+  declare registerFormUuid: string | null;
+
   @manyToMany(() => Admin, {
-    pivotTable: "admin_permissions",
-    pivotColumns: ["permission_id"],
+    pivotTable: "AdminPermissions",
+    pivotColumns: ["permissionUuid"],
     pivotTimestamps: true,
   })
   declare admins: ManyToMany<typeof Admin>;
 
   @belongsTo(() => Admin, {
-    foreignKey: "organizerId",
+    foreignKey: "organizerUuid",
   })
   declare mainOrganizer: BelongsTo<typeof Admin>;
 
   @manyToMany(() => Permission, {
-    pivotTable: "admin_permissions",
-    pivotColumns: ["admin_id"],
+    pivotTable: "AdminPermissions",
+    pivotColumns: ["adminUuid"],
     pivotTimestamps: true,
   })
   declare permissions: ManyToMany<typeof Permission>;
@@ -110,10 +124,4 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Attribute)
   declare attributes: HasMany<typeof Attribute>;
-
-  @column()
-  declare socialMediaLinks: string[] | null;
-
-  @column()
-  declare termsLink: string | null;
 }

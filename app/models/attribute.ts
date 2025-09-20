@@ -24,7 +24,7 @@ export default class Attribute extends BaseModel {
   declare uuid: string;
 
   @column()
-  declare name: string;
+  declare name: string | null;
 
   @column()
   declare slug: string | null;
@@ -33,10 +33,24 @@ export default class Attribute extends BaseModel {
   declare eventUuid: string;
 
   @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
-  declare options: string | null;
+  declare options: string[] | null;
 
   @column()
-  declare type: string;
+  declare type:
+    | "text"
+    | "textArea"
+    | "number"
+    | "file"
+    | "select"
+    | "block"
+    | "date"
+    | "time"
+    | "datetime"
+    | "multiSelect"
+    | "email"
+    | "tel"
+    | "color"
+    | "checkbox";
 
   @column()
   declare showInList: boolean;
