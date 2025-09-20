@@ -50,9 +50,10 @@ export default class Event extends BaseModel {
   declare endDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime | null) =>
+      value !== null ? value.toISO({ includeOffset: false }) : value,
   })
-  declare verifiedAt: DateTime;
+  declare verifiedAt: DateTime | null;
 
   @column()
   declare long: number | null;
@@ -94,7 +95,7 @@ export default class Event extends BaseModel {
   declare registerFormUuid: string | null;
 
   @manyToMany(() => Admin, {
-    pivotTable: "AdminPermissions",
+    pivotTable: "AdminPermission",
     pivotColumns: ["permissionUuid"],
     pivotTimestamps: true,
   })
@@ -106,7 +107,7 @@ export default class Event extends BaseModel {
   declare mainOrganizer: BelongsTo<typeof Admin>;
 
   @manyToMany(() => Permission, {
-    pivotTable: "AdminPermissions",
+    pivotTable: "AdminPermission",
     pivotColumns: ["adminUuid"],
     pivotTimestamps: true,
   })
