@@ -1,7 +1,9 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasMany,
@@ -86,6 +88,11 @@ export default class Attribute extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  @beforeCreate()
+  static assignUuid(attribute: Attribute) {
+    attribute.uuid = randomUUID();
+  }
 
   public serializeExtras = true;
 }

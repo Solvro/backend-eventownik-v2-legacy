@@ -1,6 +1,13 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
-import { BaseModel, belongsTo, column, manyToMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
@@ -49,6 +56,11 @@ export default class Email extends BaseModel {
     pivotColumns: ["sendAt", "sendBy", "status"],
   })
   declare participants: ManyToMany<typeof Participant>;
+
+  @beforeCreate()
+  static assignUuid(email: Email) {
+    email.uuid = randomUUID();
+  }
 
   serializeExtras = true;
 }

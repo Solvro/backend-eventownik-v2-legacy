@@ -1,4 +1,11 @@
-import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
+import { randomUUID } from "node:crypto";
+
+import {
+  BaseModel,
+  beforeCreate,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Admin from "./admin.js";
@@ -27,4 +34,9 @@ export default class Permission extends BaseModel {
     pivotTimestamps: true,
   })
   declare admins: ManyToMany<typeof Admin>;
+
+  @beforeCreate()
+  static assignUuid(permission: Permission) {
+    permission.uuid = randomUUID();
+  }
 }

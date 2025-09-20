@@ -1,10 +1,16 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import { DbAccessTokensProvider } from "@adonisjs/auth/access_tokens";
 import { withAuthFinder } from "@adonisjs/auth/mixins/lucid";
 import { compose } from "@adonisjs/core/helpers";
 import hash from "@adonisjs/core/services/hash";
-import { BaseModel, column, manyToMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  column,
+  manyToMany,
+} from "@adonisjs/lucid/orm";
 import type { ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
@@ -61,4 +67,9 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   declare updatedAt: DateTime;
 
   static accessTokens = DbAccessTokensProvider.forModel(Admin);
+
+  @beforeCreate()
+  static assignUuid(admin: Admin) {
+    admin.uuid = randomUUID();
+  }
 }

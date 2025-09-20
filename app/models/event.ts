@@ -1,7 +1,9 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasMany,
@@ -124,4 +126,9 @@ export default class Event extends BaseModel {
 
   @hasMany(() => Attribute)
   declare attributes: HasMany<typeof Attribute>;
+
+  @beforeCreate()
+  static assignUuid(event: Event) {
+    event.uuid = randomUUID();
+  }
 }

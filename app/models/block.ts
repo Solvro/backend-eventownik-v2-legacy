@@ -1,6 +1,13 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
-import { BaseModel, belongsTo, column, hasMany } from "@adonisjs/lucid/orm";
+import {
+  BaseModel,
+  beforeCreate,
+  belongsTo,
+  column,
+  hasMany,
+} from "@adonisjs/lucid/orm";
 import type { BelongsTo, HasMany } from "@adonisjs/lucid/types/relations";
 
 import Attribute from "./attribute.js";
@@ -45,6 +52,11 @@ export default class Block extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
+
+  @beforeCreate()
+  static assignUuid(block: Block) {
+    block.uuid = randomUUID();
+  }
 
   serializeExtras = true;
 }

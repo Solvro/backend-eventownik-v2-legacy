@@ -1,7 +1,9 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasOne,
@@ -78,6 +80,11 @@ export default class Form extends BaseModel {
     foreignKey: "firstFormUuid",
   })
   declare registerEvent: HasOne<typeof Event>;
+
+  @beforeCreate()
+  static assignUuid(form: Form) {
+    form.uuid = randomUUID();
+  }
 
   serializeExtras() {
     return {
