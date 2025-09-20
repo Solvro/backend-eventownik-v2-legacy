@@ -17,18 +17,28 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
   }
 
   relationLocalKey(
-    _: ModelRelations<LucidModel, LucidModel>["__opaque_type"],
+    relation: ModelRelations<LucidModel, LucidModel>["__opaque_type"],
     model: LucidModel,
-    __: LucidModel,
+    relatedModel: LucidModel,
   ): string {
-    return string.camelCase(`${model.name}_${model.primaryKey}`);
+    if (relation === "belongsTo") {
+      return relatedModel.primaryKey;
+    }
+
+    return model.primaryKey;
   }
 
   relationForeignKey(
-    _: ModelRelations<LucidModel, LucidModel>["__opaque_type"],
+    relation: ModelRelations<LucidModel, LucidModel>["__opaque_type"],
     model: LucidModel,
-    __: LucidModel,
+    relatedModel: LucidModel,
   ): string {
+    if (relation === "belongsTo") {
+      return string.camelCase(
+        `${relatedModel.name}_${relatedModel.primaryKey}`,
+      );
+    }
+
     return string.camelCase(`${model.name}_${model.primaryKey}`);
   }
 
