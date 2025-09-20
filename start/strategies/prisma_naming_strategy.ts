@@ -5,7 +5,7 @@ import { ModelRelations } from "@adonisjs/lucid/types/relations";
 
 export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
   tableName(model: LucidModel): string {
-    return model.name;
+    return string.plural(model.name);
   }
 
   columnName(_: LucidModel, attributeName: string): string {
@@ -47,7 +47,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
     model: LucidModel,
     relatedModel: LucidModel,
   ): string {
-    return `${model.name}${relatedModel.name}`;
+    return `${string.plural(model.name)}${string.plural(relatedModel.name)}`;
   }
 
   relationPivotForeignKey(_: "manyToMany", model: LucidModel): string {
