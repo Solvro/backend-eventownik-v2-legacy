@@ -26,10 +26,10 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
 
   relationForeignKey(
     _: ModelRelations<LucidModel, LucidModel>["__opaque_type"],
+    model: LucidModel,
     __: LucidModel,
-    relatedModel: LucidModel,
   ): string {
-    return string.camelCase(`${relatedModel.name}_${relatedModel.primaryKey}`);
+    return string.camelCase(`${model.name}_${model.primaryKey}`);
   }
 
   relationPivotTable(
