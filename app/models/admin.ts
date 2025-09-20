@@ -66,7 +66,9 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime;
 
-  static accessTokens = DbAccessTokensProvider.forModel(Admin);
+  static accessTokens = DbAccessTokensProvider.forModel(Admin, {
+    table: "AuthAccessTokens",
+  });
 
   @beforeCreate()
   static assignUuid(admin: Admin) {
