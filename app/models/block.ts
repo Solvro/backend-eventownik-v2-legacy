@@ -7,7 +7,7 @@ import Attribute from "./attribute.js";
 
 export default class Block extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare name: string;
@@ -25,7 +25,7 @@ export default class Block extends BaseModel {
   declare isRootBlock: boolean;
 
   @column()
-  declare attributeId: number;
+  declare attributeUuid: string;
 
   @hasMany(() => Block, {
     foreignKey: "parentId",

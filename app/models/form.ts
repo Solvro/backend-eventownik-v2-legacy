@@ -16,10 +16,10 @@ import Attribute from "./attribute.js";
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
   declare isOpen: boolean;

@@ -9,10 +9,10 @@ import Participant from "#models/participant";
 
 export default class Email extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
   declare name: string;

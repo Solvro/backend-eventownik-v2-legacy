@@ -17,13 +17,13 @@ import Attribute from "./attribute.js";
 
 export default class Participant extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare email: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
   declare slug: string;

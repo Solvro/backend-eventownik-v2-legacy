@@ -23,7 +23,7 @@ import Participant from "./participant.js";
 
 export default class Attribute extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare name: string;
@@ -32,7 +32,7 @@ export default class Attribute extends BaseModel {
   declare slug: string | null;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column({ serialize: (value) => JSON.parse(JSON.stringify(value)) })
   declare options: string | null;

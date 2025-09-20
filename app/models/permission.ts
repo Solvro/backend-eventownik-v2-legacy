@@ -5,7 +5,7 @@ import Admin from "./admin.js";
 
 export default class Permission extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare action: string;
@@ -13,12 +13,12 @@ export default class Permission extends BaseModel {
   @column()
   declare subject: string;
 
-  static async one(action: string, subject: string): Promise<number | null> {
+  static async one(action: string, subject: string): Promise<string | null> {
     const permission = await Permission.query()
       .where("action", action)
       .where("subject", subject)
       .first();
-    return permission?.id ?? null;
+    return permission?.uuid ?? null;
   }
 
   @manyToMany(() => Admin, {

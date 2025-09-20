@@ -25,10 +25,10 @@ import Permission from "./permission.js";
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare organizerId: number;
+  declare organizerUuid: string;
 
   @column()
   declare name: string;
