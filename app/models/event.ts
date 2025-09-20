@@ -1,17 +1,17 @@
 import { DateTime } from "luxon";
+import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
+  beforeCreate,
   belongsTo,
   column,
   hasMany,
-  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
 import type {
   BelongsTo,
   HasMany,
-  HasOne,
   ManyToMany,
 } from "@adonisjs/lucid/types/relations";
 
@@ -25,10 +25,10 @@ import Permission from "./permission.js";
 
 export default class Event extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare organizerId: number;
+  declare organizerUuid: string;
 
   @column()
   declare name: string;
@@ -49,8 +49,11 @@ export default class Event extends BaseModel {
   })
   declare endDate: DateTime;
 
-  @column()
-  declare lat: number | null;
+  @column.dateTime({
+    serialize: (value: DateTime | null) =>
+      value !== null ? value.toISO({ includeOffset: false }) : value,
+  })
+  declare verifiedAt: DateTime | null;
 
   @column()
   declare long: number | null;
@@ -62,7 +65,7 @@ export default class Event extends BaseModel {
   declare contactEmail: string | null;
 
   @column()
-  declare organizer: string | null;
+  declare organizerName: string | null;
 
   @column()
   declare participantsCount: number | null;
@@ -79,21 +82,33 @@ export default class Event extends BaseModel {
   @column()
   declare photoUrl: string | null;
 
+  @column()
+  declare policyLinks: string[] | null;
+
+  @column()
+  declare links: string[] | null;
+
+  @column()
+  declare termsLink: string | null;
+
+  @column()
+  declare registerFormUuid: string | null;
+
   @manyToMany(() => Admin, {
-    pivotTable: "admin_permissions",
-    pivotColumns: ["permission_id"],
+    pivotTable: "AdminPermission",
+    pivotColumns: ["permissionUuid"],
     pivotTimestamps: true,
   })
   declare admins: ManyToMany<typeof Admin>;
 
   @belongsTo(() => Admin, {
-    foreignKey: "organizerId",
+    foreignKey: "organizerUuid",
   })
   declare mainOrganizer: BelongsTo<typeof Admin>;
 
   @manyToMany(() => Permission, {
-    pivotTable: "admin_permissions",
-    pivotColumns: ["admin_id"],
+    pivotTable: "AdminPermission",
+    pivotColumns: ["adminUuid"],
     pivotTimestamps: true,
   })
   declare permissions: ManyToMany<typeof Permission>;
@@ -107,18 +122,14 @@ export default class Event extends BaseModel {
   @hasMany(() => Form)
   declare forms: HasMany<typeof Form>;
 
-  @hasOne(() => Form, {
-    onQuery: (query) =>
-      query.where("is_first_form", true).preload("attributes"),
-  })
-  declare firstForm: HasOne<typeof Form>;
+  @belongsTo(() => Form)
+  declare registerForm: BelongsTo<typeof Form>;
 
   @hasMany(() => Attribute)
   declare attributes: HasMany<typeof Attribute>;
 
-  @column()
-  declare socialMediaLinks: string[] | null;
-
-  @column()
-  declare termsLink: string | null;
+  @beforeCreate()
+  static assignUuid(event: Event) {
+    event.uuid = randomUUID();
+  }
 }

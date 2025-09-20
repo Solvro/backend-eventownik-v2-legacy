@@ -66,7 +66,7 @@ export default class AttributesController {
    */
   async show({ params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const attributeId = +params.uuid;
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
@@ -89,7 +89,7 @@ export default class AttributesController {
    */
   async update({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const attributeId = +params.uuid;
 
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 
@@ -115,7 +115,7 @@ export default class AttributesController {
    */
   async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = +params.eventId;
-    const attributeId = +params.id;
+    const attributeId = +params.uuid;
 
     await bouncer.authorize("manage_setting", await Event.findOrFail(eventId));
 

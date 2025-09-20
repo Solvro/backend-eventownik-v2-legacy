@@ -14,11 +14,10 @@ export const createFormValidator = vine.compile(
     name: vine.string(),
     description: vine.string(),
     startDate: vine.date().transform(dateTimeTransform),
-    isFirstForm: vine.boolean(),
     attributes: vine
       .array(
         vine.object({
-          id: vine.number(),
+          uuid: vine.string(),
           isRequired: vine.boolean().optional(),
           isEditable: vine.boolean().optional(),
           order: vine.number().optional(),
@@ -39,7 +38,7 @@ export const updateFormValidator = vine.compile(
     attributes: vine
       .array(
         vine.object({
-          id: vine.number(),
+          uuid: vine.string(),
           isRequired: vine.boolean().optional(),
           isEditable: vine.boolean().optional(),
           order: vine.number().optional(),
@@ -48,7 +47,6 @@ export const updateFormValidator = vine.compile(
       .minLength(1)
       .optional(),
     isOpen: vine.boolean().optional(),
-    isFirstForm: vine.boolean().optional(),
   }),
 );
 
@@ -63,7 +61,7 @@ export const formSubmitValidator = vine.compile(
             (await db
               .from("participants")
               .where("email", value)
-              .andWhere("event_id", +field.meta.eventId)
+              .andWhere("eventUuid", String(field.meta.eventId))
               .first()) === null,
         )
         .optional()
