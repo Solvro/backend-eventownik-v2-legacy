@@ -11,7 +11,7 @@ export const createAttributeSchema = vine.object({
         (await db
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
-          .andWhere("event_id", +field.meta.eventId)
+          .andWhere("eventUuid", +field.meta.eventId)
           .first()) === null,
     )
     .transform((value) => string.slug(value, { lower: true }))
@@ -48,7 +48,7 @@ export const UpdateAttributeSchema = vine.object({
         (await db
           .from("attributes")
           .where("slug", string.slug(value, { lower: true }))
-          .andWhere("event_id", +field.meta.eventId)
+          .andWhere("eventUuid", +field.meta.eventId)
           .andWhereNot("id", +field.meta.attributeId)
           .first()) === null,
     )

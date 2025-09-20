@@ -10,7 +10,7 @@ export const participantsStoreValidator = vine.compile(
           .from("participants")
           .select("email", "id")
           .where("email", value)
-          .andWhere("event_id", +field.meta.eventId)
+          .andWhere("eventUuid", +field.meta.eventId)
           .first()) as { email: string } | null;
 
         return participantEmail === null;
@@ -34,13 +34,13 @@ export const participantsUpdateValidator = vine.compile(
       .unique(async (db, value, field) => {
         const participantEmail = (await db
           .from("participants")
-          .select("email", "id")
+          .select("email", "uuid")
           .where("email", value)
-          .andWhere("event_id", +field.meta.eventId)
-          .first()) as { email: string; id: number } | null;
+          .andWhere("eventUuid", +field.meta.eventId)
+          .first()) as { email: string; uuid: string } | null;
         if (
           participantEmail !== null &&
-          participantEmail.id === field.meta.participantId
+          participantEmail.uuid === field.meta.participantId
         ) {
           return true;
         }

@@ -15,14 +15,14 @@ export class AttributeService {
   constructor(private blockService: BlockService) {}
 
   async getEventAttributes(eventId: number) {
-    const attributes = await Attribute.findManyBy("event_id", eventId);
+    const attributes = await Attribute.findManyBy("eventUuid", eventId);
 
     return attributes;
   }
 
   async getEventAttribute(eventId: number, attributeId: number) {
     const attribute = await Attribute.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .andWhere("id", attributeId)
       .firstOrFail();
 
@@ -41,7 +41,7 @@ export class AttributeService {
     });
 
     if (newAttribute.type === "block") {
-      await this.blockService.createRootBlock(newAttribute.id);
+      await this.blockService.createRootBlock(newAttribute.uuid);
     }
 
     return newAttribute;
@@ -80,16 +80,16 @@ export class AttributeService {
         await updatedAttribute.rootBlock.delete();
       }
     } else if (updatedAttribute.type === "block") {
-      await this.blockService.createRootBlock(updatedAttribute.id);
+      await this.blockService.createRootBlock(updatedAttribute.uuid);
     }
 
     return await this.getEventAttribute(eventId, attributeId);
   }
 
   async deleteAttribute(eventId: number, attributeId: number) {
-    await Block.query().where("attribute_id", attributeId).delete();
+    await Block.query().where("attributeUuid", attributeId).delete();
     await Attribute.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .andWhere("id", attributeId)
       .delete();
   }

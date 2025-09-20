@@ -32,7 +32,7 @@ export default class ParticipantsAttributesController {
 
     const participant = await Participant.query()
       .where("id", participantId)
-      .andWhere("event_id", eventId)
+      .andWhere("eventUuid", eventId)
       .first();
 
     if (participant === null) {
@@ -45,7 +45,7 @@ export default class ParticipantsAttributesController {
       .where("id", attributeId)
       .preload("participantAttributes", (participantAttributesQuery) =>
         participantAttributesQuery
-          .where("participant_id", participantId)
+          .where("participantUuid", participantId)
           .pivotColumns(["value"]),
       )
       .firstOrFail();

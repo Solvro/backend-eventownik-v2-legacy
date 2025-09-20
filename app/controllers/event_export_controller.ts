@@ -35,7 +35,9 @@ export default class EventExportController {
       })
       .firstOrFail();
 
-    const attributes = await this.attributeService.getEventAttributes(event.id);
+    const attributes = await this.attributeService.getEventAttributes(
+      event.uuid,
+    );
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Export");
@@ -56,11 +58,11 @@ export default class EventExportController {
       (p1, p2) => p1.id - p2.id,
     ) as Participant[];
 
-    if (queryParams.ids !== undefined) {
+    if (queryParams.uuids !== undefined) {
       const participantsToFilter = (
-        typeof queryParams.ids === "string"
-          ? queryParams.ids.split(",")
-          : (queryParams.ids as string[])
+        typeof queryParams.uuids === "string"
+          ? queryParams.uuids.split(",")
+          : (queryParams.uuids as string[])
       )
         .filter((v) => v.trim() !== "")
         .map((v) => Number(v))
@@ -68,12 +70,12 @@ export default class EventExportController {
 
       sortedParticipants = sortedParticipants.filter(
         (participant) =>
-          participantsToFilter.findIndex((id) => id === participant.id) > -1,
+          participantsToFilter.findIndex((id) => id === participant.uuid) > -1,
       );
     }
 
     sheet.getColumn("participants_id").values = ["ID"].concat(
-      sortedParticipants.map((participant) => participant.id.toString()),
+      sortedParticipants.map((participant) => participant.uuid.toString()),
     );
     sheet.getColumn("participants_email").values = ["Email"].concat(
       sortedParticipants.map((participant) => participant.email),

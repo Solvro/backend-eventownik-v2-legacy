@@ -24,7 +24,7 @@ export default class ParticipantsController {
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
       .select("id", "email", "slug", "created_at")
-      .where("event_id", params.eventId as number)
+      .where("eventUuid", params.eventId as number)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
           .select("id", "name", "slug", "created_at", "updated_at")
@@ -34,11 +34,10 @@ export default class ParticipantsController {
 
     const formattedParticipants = participants.map((participant) => {
       return {
-        id: participant.id,
+        id: participant.uuid,
         email: participant.email,
-        slug: participant.slug,
         attributes: participant.attributes.map((attribute) => ({
-          id: attribute.id,
+          id: attribute.uuid,
           name: attribute.name,
           slug: attribute.slug,
           value: attribute.$extras.pivot_value as string,
@@ -63,7 +62,7 @@ export default class ParticipantsController {
    * @responseBody 201 - <Participant>
    */
   async store({ request, params }: HttpContext) {
-    const eventId = +params.eventId;
+    const eventId = String(params.eventId);
 
     const participantCreateDTO = await request.validateUsing(
       participantsStoreValidator,
@@ -93,7 +92,7 @@ export default class ParticipantsController {
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query().where(
       "id",
-      params.id as number,
+      params.uuid as number,
     );
     if (findParticipant.length === 0) {
       return response.notFound("Participant not found.");
@@ -101,8 +100,8 @@ export default class ParticipantsController {
 
     const participant = await Participant.query()
       .select("id", "email", "slug", "created_at")
-      .where("id", +params.id)
-      .andWhere("event_id", +params.eventId)
+      .where("id", +params.uuid)
+      .andWhere("eventUuid", +params.eventId)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
           .select("id", "name", "slug", "created_at", "updated_at")
@@ -116,12 +115,11 @@ export default class ParticipantsController {
       .firstOrFail();
 
     const transformedParticipant = {
-      id: participant.id,
+      id: participant.uuid,
       email: participant.email,
-      slug: participant.slug,
       createdAt: participant.createdAt.toFormat("yyyy-MM-dd HH:mm:ss"),
       attributes: participant.attributes.map((attribute) => ({
-        id: attribute.id,
+        id: attribute.uuid,
         name: attribute.name,
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
@@ -152,8 +150,8 @@ export default class ParticipantsController {
    * @responseBody 200 - <Participant>
    */
   async update({ params, request }: HttpContext) {
-    const eventId = +params.eventId;
-    const participantId = +params.id;
+    const eventId = String(params.eventId);
+    const participantId = String(params.uuid);
 
     const updateParticipantDTO = await request.validateUsing(
       participantsUpdateValidator,
@@ -172,11 +170,10 @@ export default class ParticipantsController {
     );
 
     const transformedUpdatedParticipant = {
-      id: updatedParticipant.id,
+      id: updatedParticipant.uuid,
       email: updatedParticipant.email,
-      slug: updatedParticipant.slug,
       attributes: updatedParticipant.attributes.map((attribute) => ({
-        id: attribute.id,
+        id: attribute.uuid,
         name: attribute.name,
         slug: attribute.slug,
         value: attribute.$extras.pivot_value as string,
@@ -196,12 +193,12 @@ export default class ParticipantsController {
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async destroy({ params, response }: HttpContext) {
-    const participantId = +params.id;
+    const participantId = +params.uuid;
     const eventId = +params.eventId;
 
     await Participant.query()
       .where("id", participantId)
-      .andWhere("event_id", eventId)
+      .andWhere("eventUuid", eventId)
       .delete();
 
     return response.noContent();

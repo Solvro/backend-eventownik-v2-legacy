@@ -23,15 +23,15 @@ export default class EmailsController {
     await bouncer.authorize("manage_email", await Event.findOrFail(eventId));
 
     const emails = await Email.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .select([
         "id",
         "name",
         "trigger",
-        "trigger_value",
-        "trigger_value_2",
-        "created_at",
-        "updated_at",
+        "triggerValue",
+        "triggerValue_2",
+        "createdAt",
+        "updatedAt",
       ])
       .withCount("participants", (q) =>
         q.where("status", "failed").as("failedCount"),
@@ -55,14 +55,14 @@ export default class EmailsController {
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, bouncer }: HttpContext) {
-    const emailId = +params.id;
+    const emailId = +params.uuid;
     const event = await Event.findOrFail(params.eventId);
     await bouncer.authorize("manage_email", event);
 
     const email = Email.query()
       .preload("participants", (q) => q.pivotColumns(["status"]))
       .where("id", emailId)
-      .where("event_id", event.id)
+      .where("eventUuid", event.uuid)
       .firstOrFail();
 
     return email;
@@ -103,7 +103,7 @@ export default class EmailsController {
     );
 
     const data = await request.validateUsing(emailsUpdateValidator);
-    const emailId = Number(params.id);
+    const emailId = Number(params.uuid);
     const email = await Email.findOrFail(emailId);
 
     await email.merge(data).save();
@@ -124,7 +124,7 @@ export default class EmailsController {
       await Event.findOrFail(params.eventId),
     );
 
-    const emailId = Number(params.id);
+    const emailId = Number(params.uuid);
     const email = await Email.findOrFail(emailId);
 
     await email.related("participants").detach();
@@ -147,12 +147,12 @@ export default class EmailsController {
     await bouncer.authorize("manage_email", event);
 
     const email = await Email.query()
-      .where("event_id", event.id)
+      .where("eventUuid", event.uuid)
       .where("id", emailId)
       .firstOrFail();
     const participants = await Participant.query()
       .whereIn("id", request.input("participants") as number[])
-      .where("event_id", event.id);
+      .where("eventUuid", event.uuid);
 
     for (const participant of participants) {
       await EmailService.sendToParticipant(
@@ -180,7 +180,7 @@ export default class EmailsController {
     await bouncer.authorize("manage_email", event);
 
     const email = await Email.query()
-      .where("event_id", event.id)
+      .where("eventUuid", event.uuid)
       .where("id", emailId)
       .firstOrFail();
 
@@ -190,9 +190,9 @@ export default class EmailsController {
     const emailData = {
       ...email.$original,
     };
-    delete emailData.id;
-    delete emailData.created_at;
-    delete emailData.updated_at;
+    delete emailData.uuid;
+    delete emailData.createdAt;
+    delete emailData.updatedAt;
 
     const newEmail = await event.related("emails").create({
       ...emailData,

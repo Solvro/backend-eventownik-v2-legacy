@@ -29,7 +29,7 @@ export default class FormsController {
     const perPage = Number(request.input("perPage", 10));
 
     return await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .preload("attributes")
       .paginate(page, perPage);
   }
@@ -43,11 +43,11 @@ export default class FormsController {
    * @responseBody 201 - <Form>
    */
   public async store({ params, request, response, bouncer }: HttpContext) {
-    const eventId = Number(params.eventId);
+    const eventUuid = Number(params.eventUuid);
 
     const event = await Event.query()
-      .where("id", eventId)
-      .preload("firstForm")
+      .where("uuid", eventUuid)
+      .preload("registerForm")
       .preload("attributes")
       .firstOrFail();
 
@@ -66,23 +66,23 @@ export default class FormsController {
     const form = await event.related("forms").create(newFormData);
 
     const eventAttributesIdsSet = new Set(
-      event.attributes.map((attribute) => attribute.id),
+      event.attributes.map((attribute) => attribute.uuid),
     );
 
     const attributesFromDifferentEvent = attributes.filter(
-      (attribute) => !eventAttributesIdsSet.has(attribute.id),
+      (attribute) => !eventAttributesIdsSet.has(attribute.uuid),
     );
 
     if (attributesFromDifferentEvent.length > 0) {
       return response.badRequest({
-        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.id))}, do not belong to this event`,
+        message: `Attributes with ids ${JSON.stringify(attributesFromDifferentEvent.map((attribute) => attribute.uuid))}, do not belong to this event`,
       });
     }
 
     await form.related("attributes").attach(
       attributes.reduce(
         (acc, attribute) => {
-          acc[attribute.id] = {
+          acc[attribute.uuid] = {
             is_required: attribute.isRequired,
             is_editable: attribute.isEditable,
             order: attribute.order,
@@ -90,7 +90,7 @@ export default class FormsController {
           return acc;
         },
         {} as Record<
-          number,
+          string,
           { is_required?: boolean; is_editable?: boolean; order?: number }
         >,
       ),
@@ -98,8 +98,8 @@ export default class FormsController {
 
     return response.created(
       await Form.query()
-        .where("id", form.id)
-        .andWhere("event_id", eventId)
+        .where("id", form.uuid)
+        .andWhere("eventUuid", eventUuid)
         .preload("attributes"),
     );
   }
@@ -114,11 +114,11 @@ export default class FormsController {
    */
   public async show({ params, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const formId = Number(params.uuid);
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     return await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .where("id", formId)
       .preload("attributes")
       .firstOrFail();
@@ -135,15 +135,15 @@ export default class FormsController {
    */
   public async update({ params, request, bouncer, response }: HttpContext) {
     const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const formId = Number(params.uuid);
     const event = await Event.query()
       .where("id", eventId)
-      .preload("firstForm")
+      .preload("registerForm")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .where("id", formId)
       .firstOrFail();
 
@@ -170,7 +170,7 @@ export default class FormsController {
       await form.related("attributes").attach(
         attributes.reduce(
           (acc, attribute) => {
-            acc[attribute.id] = {
+            acc[attribute.uuid] = {
               is_required: attribute.isRequired,
               is_editable: attribute.isEditable,
               order: attribute.order,
@@ -178,7 +178,7 @@ export default class FormsController {
             return acc;
           },
           {} as Record<
-            number,
+            string,
             { is_required?: boolean; is_editable?: boolean; order?: number }
           >,
         ),
@@ -186,7 +186,7 @@ export default class FormsController {
     }
 
     const updatedForm = await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .where("id", formId)
       .preload("attributes")
       .firstOrFail();
@@ -204,11 +204,11 @@ export default class FormsController {
    */
   public async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
-    const formId = Number(params.id);
+    const formId = Number(params.uuid);
     await bouncer.authorize("manage_form", await Event.findOrFail(eventId));
 
     await Form.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .andWhere("id", formId)
       .delete();
 
@@ -226,14 +226,14 @@ export default class FormsController {
    * @responseBody 404 - { "message": "Row not found", "name": "Exception", "status": 404 }
    */
   public async submitForm({ params, request, response }: HttpContext) {
-    const formId = +params.id;
+    const formId = +params.uuid;
     const eventSlug = params.eventSlug as string;
 
     const event = await Event.findByOrFail("slug", eventSlug);
 
     const { email, participantSlug, ...attributes } =
       await request.validateUsing(formSubmitValidator, {
-        meta: { eventId: event.id },
+        meta: { eventId: event.uuid },
       });
 
     // Transform attributes so that files work properly

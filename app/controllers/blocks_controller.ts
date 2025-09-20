@@ -38,11 +38,11 @@ export default class BlocksController {
   async publicIndex({ params }: HttpContext) {
     const event = await Event.findByOrFail("slug", params.eventSlug);
     const attribute = await Attribute.query()
-      .where("event_id", event.id)
+      .where("eventUuid", event.uuid)
       .where("id", +params.attributeId)
       .firstOrFail();
 
-    return await this.blockService.getBlockTree(attribute.id);
+    return await this.blockService.getBlockTree(attribute.uuid);
   }
 
   /**
@@ -56,13 +56,13 @@ export default class BlocksController {
   async show({ params, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.attributeId;
-    const blockId = +params.id;
+    const blockId = +params.uuid;
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const block = await Block.query()
       .where("id", blockId)
-      .where("attribute_id", attributeId)
+      .where("attributeUuid", attributeId)
       .preload("parent")
       .preload("children")
       .preload("attribute")
@@ -114,7 +114,7 @@ export default class BlocksController {
   async update({ params, request, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.attributeId;
-    const blockId = +params.id;
+    const blockId = +params.uuid;
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
@@ -122,7 +122,7 @@ export default class BlocksController {
 
     const block = await Block.query()
       .where("id", blockId)
-      .andWhere("attribute_id", attributeId)
+      .andWhere("attributeUuid", attributeId)
       .firstOrFail();
 
     block.merge(data);
@@ -143,13 +143,13 @@ export default class BlocksController {
   async destroy({ params, response, bouncer }: HttpContext) {
     const eventId = +params.eventId;
     const attributeId = +params.attributeId;
-    const blockId = +params.id;
+    const blockId = +params.uuid;
 
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     await Block.query()
       .where("id", blockId)
-      .andWhere("attribute_id", attributeId)
+      .andWhere("attributeUuid", attributeId)
       .delete();
 
     return response.noContent();

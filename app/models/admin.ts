@@ -18,7 +18,7 @@ const AuthFinder = withAuthFinder(() => hash.use("scrypt"), {
 
 export default class Admin extends compose(BaseModel, AuthFinder) {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
   declare firstName: string;
@@ -47,7 +47,7 @@ export default class Admin extends compose(BaseModel, AuthFinder) {
   declare permissions: ManyToMany<typeof Permission>;
 
   @manyToMany(() => Event, {
-    onQuery: (query) => query.distinctOn("eventId"),
+    onQuery: (query) => query.distinctOn("eventUuid"),
     pivotTable: "AdminPermissions",
     pivotColumns: ["permissionId"],
     pivotTimestamps: true,
