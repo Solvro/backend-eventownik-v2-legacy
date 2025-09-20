@@ -1,14 +1,17 @@
 import { DateTime } from "luxon";
-import { randomUUID } from "node:crypto";
 
 import {
   BaseModel,
-  beforeCreate,
   belongsTo,
   column,
+  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import type {
+  BelongsTo,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
 
@@ -22,7 +25,7 @@ export default class Form extends BaseModel {
   declare eventUuid: string;
 
   @column()
-  declare isOpen: boolean;
+  declare isEditable: boolean;
 
   @column()
   declare description: string;
@@ -33,8 +36,15 @@ export default class Form extends BaseModel {
   @column()
   declare isFirstForm: boolean;
 
-  @column()
-  declare slug: string;
+  @column({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
+  declare openDate: DateTime;
+
+  @column({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
+  declare closeDate: DateTime;
 
   @column.dateTime({
     serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
@@ -64,10 +74,10 @@ export default class Form extends BaseModel {
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
-  @beforeCreate()
-  static afterSlug(form: Form) {
-    form.slug = randomUUID();
-  }
+  @hasOne(() => Event, {
+    foreignKey: "firstFormUuid",
+  })
+  declare registerEvent: HasOne<typeof Event>;
 
   serializeExtras() {
     return {

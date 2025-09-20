@@ -13,19 +13,19 @@ export default class Block extends BaseModel {
   declare name: string;
 
   @column()
-  declare description: string | null;
+  declare description?: string | null;
 
   @column()
-  declare parentId: number | null;
+  declare parentUuid: string | null;
 
   @column()
-  declare capacity: number | null;
+  declare capacity?: number | null;
 
   @column()
-  declare isRootBlock: boolean;
+  declare order?: number | null;
 
   @column()
-  declare attributeUuid: string;
+  declare attributeUuid?: string | null;
 
   @hasMany(() => Block, {
     foreignKey: "parentUuid",

@@ -24,10 +24,10 @@ export default class Email extends BaseModel {
   declare trigger: string;
 
   @column()
-  declare triggerValue: string;
+  declare triggerValue?: string | null;
 
   @column()
-  declare triggerValue2: string;
+  declare triggerValue2?: string | null;
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime;
@@ -39,7 +39,7 @@ export default class Email extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @column()
-  declare formId: number | null;
+  declare formUuid?: string | null;
 
   @belongsTo(() => Form)
   declare form: BelongsTo<typeof Form>;
