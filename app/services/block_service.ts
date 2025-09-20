@@ -7,7 +7,7 @@ import Participant from "#models/participant";
 export class BlockService {
   async getBlockTree(attributeId: string) {
     const blockAttribute = await Attribute.query()
-      .where("id", attributeId)
+      .where("uuid", attributeId)
       .preload("rootBlock", (q) => q.preload("attribute"))
       .firstOrFail();
 
@@ -92,7 +92,7 @@ export class BlockService {
 
   async canSignInToBlock(attributeId: number, blockId: number) {
     const block = await Block.query()
-      .where("id", blockId)
+      .where("uuid", blockId)
       .andWhere("attributeUuid", attributeId)
       .firstOrFail();
 

@@ -25,7 +25,7 @@ export default class OrganizersController {
     const eventId = +context.params.eventId;
 
     return await Admin.query()
-      .select("id", "firstName", "lastName", "email")
+      .select("uuid", "firstName", "lastName", "email")
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("event_id", eventId),
       )
@@ -60,7 +60,7 @@ export default class OrganizersController {
     const organizerId = +params.uuid;
 
     const organizer = await Admin.query()
-      .where("id", organizerId)
+      .where("uuid", organizerId)
       .whereHas("events", (query) => query.where("events.uuid", eventId))
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("event_id", eventId),

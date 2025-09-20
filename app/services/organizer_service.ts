@@ -31,7 +31,7 @@ export class OrganizerService {
 
   async getOrganizerWithPermissions(organizerId: number, eventId: number) {
     return await Admin.query()
-      .where("id", organizerId)
+      .where("uuid", organizerId)
       .whereHas("events", (eventsQuery) =>
         eventsQuery.where("eventUuid", eventId),
       )
@@ -62,7 +62,7 @@ export class OrganizerService {
     });
 
     const updatedOrganizer = await Admin.query()
-      .where("id", organizerId)
+      .where("uuid", organizerId)
       .preload("permissions")
       .firstOrFail();
 

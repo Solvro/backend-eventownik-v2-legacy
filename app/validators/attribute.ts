@@ -1,22 +1,7 @@
 import vine from "@vinejs/vine";
 
-import string from "@adonisjs/core/helpers/string";
-
 export const createAttributeSchema = vine.object({
   name: vine.string(),
-  slug: vine
-    .string()
-    .unique(
-      async (db, value, field) =>
-        (await db
-          .from("attributes")
-          .where("slug", string.slug(value, { lower: true }))
-          .andWhere("eventUuid", +field.meta.eventId)
-          .first()) === null,
-    )
-    .transform((value) => string.slug(value, { lower: true }))
-    .nullable()
-    .optional(),
   type: vine.enum([
     "text",
     "textarea",
@@ -41,20 +26,6 @@ export const createAttributeValidator = vine.compile(createAttributeSchema);
 
 export const UpdateAttributeSchema = vine.object({
   name: vine.string().optional(),
-  slug: vine
-    .string()
-    .unique(
-      async (db, value, field) =>
-        (await db
-          .from("attributes")
-          .where("slug", string.slug(value, { lower: true }))
-          .andWhere("eventUuid", +field.meta.eventId)
-          .andWhereNot("id", +field.meta.attributeId)
-          .first()) === null,
-    )
-    .transform((value) => string.slug(value, { lower: true }))
-    .nullable()
-    .optional(),
   type: vine
     .enum([
       "text",

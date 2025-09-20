@@ -39,7 +39,7 @@ export default class BlocksController {
     const event = await Event.findByOrFail("slug", params.eventSlug);
     const attribute = await Attribute.query()
       .where("eventUuid", event.uuid)
-      .where("id", +params.attributeId)
+      .where("uuid", +params.attributeId)
       .firstOrFail();
 
     return await this.blockService.getBlockTree(attribute.uuid);
@@ -61,7 +61,7 @@ export default class BlocksController {
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     const block = await Block.query()
-      .where("id", blockId)
+      .where("uuid", blockId)
       .where("attributeUuid", attributeId)
       .preload("parent")
       .preload("children")
@@ -121,7 +121,7 @@ export default class BlocksController {
     const data = await request.validateUsing(updateBlockValidator);
 
     const block = await Block.query()
-      .where("id", blockId)
+      .where("uuid", blockId)
       .andWhere("attributeUuid", attributeId)
       .firstOrFail();
 
@@ -148,7 +148,7 @@ export default class BlocksController {
     await bouncer.authorize("manage_event", await Event.findOrFail(eventId));
 
     await Block.query()
-      .where("id", blockId)
+      .where("uuid", blockId)
       .andWhere("attributeUuid", attributeId)
       .delete();
 

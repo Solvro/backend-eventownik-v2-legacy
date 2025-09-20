@@ -83,7 +83,7 @@ export default class EventController {
    */
   public async show({ params, auth, bouncer }: HttpContext) {
     const event = await Event.query()
-      .where("id", Number(params.uuid))
+      .where("uuid", Number(params.uuid))
       .preload("permissions", (q) =>
         q.where("AdminPermissions.adminUuid", auth.user?.uuid ?? 0),
       )

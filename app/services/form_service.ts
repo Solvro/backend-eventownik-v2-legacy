@@ -30,7 +30,7 @@ export class FormService {
     const event = await Event.findByOrFail("slug", eventSlug);
 
     const form = await Form.query()
-      .where("id", formId)
+      .where("uuid", formId)
       .andWhere("eventUuid", event.uuid)
       .preload("attributes", async (query) => {
         await query.pivotColumns(["is_required"]);

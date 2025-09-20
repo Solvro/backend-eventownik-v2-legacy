@@ -19,15 +19,15 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get all participants
    * @description Get all participants and their attributes for specific event
-   * @responseBody 200 - [{"id":32,"email":"test@test.pl", "created_at":"yyyy-MM-dd HH:mm:ss", "slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"id":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
+   * @responseBody 200 - [{"uuid":32,"email":"test@test.pl", "created_at":"yyyy-MM-dd HH:mm:ss", "slug":"9081d217-9e13-4642-b7f0-2b8f8f409dfb","createdAt":"2025-02-19 13:56:10","updatedAt":"2025-02-19 13:56:10","attributes":[{"uuid":25,"name":"Sample Attribute","value":"sample value","slug":"sample-slug"}]}]
    */
   async index({ params }: HttpContext) {
     const participants = await Participant.query()
-      .select("id", "email", "slug", "created_at")
+      .select("uuid", "email", "slug", "created_at")
       .where("eventUuid", params.eventId as number)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug", "created_at", "updated_at")
+          .select("uuid", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"])
           .where("show_in_list", true),
       );
@@ -86,12 +86,12 @@ export default class ParticipantsController {
    * @tag participants
    * @summary Get a participant
    * @description Get a participant and sent emails for specific event
-   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes": [{ "id": 25, "name": "Sample Attribute", "slug": "sample-slug", "value": "sample value" }], "emails": [{ "id": 1, "name": "Welcome Email", "content": "Welcome to our event!", "trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin", "sendAt": "2025-02-19T14:43:12.000+01:00", "status": "sent" }]
+   * @responseBody 200 - <Participant>.exclude(eventId, updatedAt).append("attributes": [{ "uuid": 25, "name": "Sample Attribute", "slug": "sample-slug", "value": "sample value" }], "emails": [{ "uuid": 1, "name": "Welcome Email", "content": "Welcome to our event!", "trigger": "participant_registered", "triggerValue": "Lorem Ipsum", "sendBy": "admin", "sendAt": "2025-02-19T14:43:12.000+01:00", "status": "sent" }]
    * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
    */
   async show({ params, response }: HttpContext) {
     const findParticipant = await Participant.query().where(
-      "id",
+      "uuid",
       params.uuid as number,
     );
     if (findParticipant.length === 0) {
@@ -99,17 +99,17 @@ export default class ParticipantsController {
     }
 
     const participant = await Participant.query()
-      .select("id", "email", "slug", "created_at")
-      .where("id", +params.uuid)
+      .select("uuid", "email", "slug", "created_at")
+      .where("uuid", +params.uuid)
       .andWhere("eventUuid", +params.eventId)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug", "created_at", "updated_at")
+          .select("uuid", "name", "slug", "created_at", "updated_at")
           .pivotColumns(["value"]),
       )
       .preload("emails", (emailsQuery) =>
         emailsQuery
-          .select("id", "name", "content", "trigger", "trigger_value")
+          .select("uuid", "name", "content", "trigger", "trigger_value")
           .pivotColumns(["send_by", "send_at", "status"]),
       )
       .firstOrFail();
@@ -197,7 +197,7 @@ export default class ParticipantsController {
     const eventId = +params.eventId;
 
     await Participant.query()
-      .where("id", participantId)
+      .where("uuid", participantId)
       .andWhere("eventUuid", eventId)
       .delete();
 

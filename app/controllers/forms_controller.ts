@@ -98,7 +98,7 @@ export default class FormsController {
 
     return response.created(
       await Form.query()
-        .where("id", form.uuid)
+        .where("uuid", form.uuid)
         .andWhere("eventUuid", eventUuid)
         .preload("attributes"),
     );
@@ -119,7 +119,7 @@ export default class FormsController {
 
     return await Form.query()
       .where("eventUuid", eventId)
-      .where("id", formId)
+      .where("uuid", formId)
       .preload("attributes")
       .firstOrFail();
   }
@@ -137,14 +137,14 @@ export default class FormsController {
     const eventId = Number(params.eventId);
     const formId = Number(params.uuid);
     const event = await Event.query()
-      .where("id", eventId)
+      .where("uuid", eventId)
       .preload("registerForm")
       .firstOrFail();
 
     await bouncer.authorize("manage_form", event);
     const form = await Form.query()
       .where("eventUuid", eventId)
-      .where("id", formId)
+      .where("uuid", formId)
       .firstOrFail();
 
     const { attributes, ...updates } =
@@ -187,7 +187,7 @@ export default class FormsController {
 
     const updatedForm = await Form.query()
       .where("eventUuid", eventId)
-      .where("id", formId)
+      .where("uuid", formId)
       .preload("attributes")
       .firstOrFail();
 
@@ -209,7 +209,7 @@ export default class FormsController {
 
     await Form.query()
       .where("eventUuid", eventId)
-      .andWhere("id", formId)
+      .andWhere("uuid", formId)
       .delete();
 
     return response.noContent();

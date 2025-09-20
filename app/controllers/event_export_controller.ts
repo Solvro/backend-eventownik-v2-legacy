@@ -29,7 +29,7 @@ export default class EventExportController {
    */
   public async handle({ params, response, request }: HttpContext) {
     const event = await Event.query()
-      .where("id", +params.eventId)
+      .where("uuid", +params.eventId)
       .preload("participants", async (participants) => {
         await participants.preload("attributes");
       })
@@ -47,7 +47,7 @@ export default class EventExportController {
     });
 
     sheet.columns = [
-      { header: "id", key: "participants_id" },
+      { header: "uuid", key: "participants_id" },
       { header: "email", key: "participants_email" },
       ...attributesColumns,
     ];
@@ -74,7 +74,7 @@ export default class EventExportController {
       );
     }
 
-    sheet.getColumn("participants_id").values = ["ID"].concat(
+    sheet.getColumn("participants_id").values = ["uuid"].concat(
       sortedParticipants.map((participant) => participant.uuid.toString()),
     );
     sheet.getColumn("participants_email").values = ["Email"].concat(

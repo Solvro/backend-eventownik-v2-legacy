@@ -86,7 +86,7 @@ export const updateEventValidator = vine.compile(
           (await db
             .from("events")
             .where("slug", string.slug(value, { lower: true }))
-            .whereNot("id", +field.meta.eventId)
+            .whereNot("uuid", +field.meta.eventId)
             .first()) === null,
       )
       .use(slugMinLength(3))

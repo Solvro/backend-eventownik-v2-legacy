@@ -51,7 +51,7 @@ export default class AdminsController {
    */
   async show({ params }: HttpContext) {
     return await Admin.query()
-      .where("id", +params.uuid)
+      .where("uuid", +params.uuid)
       .preload("events")
       .preload("permissions")
       .firstOrFail();

@@ -62,7 +62,7 @@ export class ParticipantService {
     const { participantAttributes, ...updates } = updateParticipantDTO;
 
     const participant = await Participant.query()
-      .where("id", participantId)
+      .where("uuid", participantId)
       .andWhere("eventUuid", eventId)
       .firstOrFail();
 
@@ -97,11 +97,11 @@ export class ParticipantService {
     }
 
     const updatedParticipant = await Participant.query()
-      .where("id", participantId)
+      .where("uuid", participantId)
       .where("eventUuid", eventId)
       .preload("attributes", (attributesQuery) =>
         attributesQuery
-          .select("id", "name", "slug")
+          .select("uuid", "name", "slug")
           .pivotColumns(["value"])
           .where("show_in_list", true),
       )
@@ -127,7 +127,7 @@ export class ParticipantService {
     const event = await Event.findOrFail(+eventId);
 
     const participants = await Participant.query()
-      .whereIn("id", participantsToUnregisterIds)
+      .whereIn("uuid", participantsToUnregisterIds)
       .andWhere("eventUuid", event.uuid);
 
     await Promise.all(

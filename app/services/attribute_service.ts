@@ -23,7 +23,7 @@ export class AttributeService {
   async getEventAttribute(eventId: number, attributeId: number) {
     const attribute = await Attribute.query()
       .where("eventUuid", eventId)
-      .andWhere("id", attributeId)
+      .andWhere("uuid", attributeId)
       .firstOrFail();
 
     return attribute;
@@ -90,7 +90,7 @@ export class AttributeService {
     await Block.query().where("attributeUuid", attributeId).delete();
     await Attribute.query()
       .where("eventUuid", eventId)
-      .andWhere("id", attributeId)
+      .andWhere("uuid", attributeId)
       .delete();
   }
 }
