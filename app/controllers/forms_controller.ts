@@ -57,7 +57,7 @@ export default class FormsController {
       await request.validateUsing(createFormValidator);
 
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (newFormData.isFirstForm === true && event.firstForm !== null) {
+    if (newFormData.isFirstForm === true && event.registerForm !== null) {
       return response.badRequest({
         message: "Event already has a registration form",
       });
@@ -152,7 +152,7 @@ export default class FormsController {
 
     if (
       // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-      event.firstForm !== null &&
+      event.registerForm !== null &&
       form.isFirstForm === false &&
       updates.isFirstForm === true
     ) {

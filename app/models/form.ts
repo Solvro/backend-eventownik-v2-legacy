@@ -58,8 +58,8 @@ export default class Form extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "form_definitions",
-    pivotColumns: ["is_editable", "is_required", "order"],
+    pivotTable: "FormDefinitions",
+    pivotColumns: ["isEditable", "isRequired", "order"],
     pivotTimestamps: true,
   })
   declare attributes: ManyToMany<typeof Attribute>;

@@ -28,12 +28,12 @@ export default class Block extends BaseModel {
   declare attributeUuid: string;
 
   @hasMany(() => Block, {
-    foreignKey: "parentId",
+    foreignKey: "parentUuid",
   })
   declare children: HasMany<typeof Block>;
 
   @belongsTo(() => Block, {
-    foreignKey: "parentId",
+    foreignKey: "parentUuid",
   })
   declare parent: BelongsTo<typeof Block>;
 

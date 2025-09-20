@@ -5,13 +5,11 @@ import {
   belongsTo,
   column,
   hasMany,
-  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
 import type {
   BelongsTo,
   HasMany,
-  HasOne,
   ManyToMany,
 } from "@adonisjs/lucid/types/relations";
 
@@ -107,11 +105,8 @@ export default class Event extends BaseModel {
   @hasMany(() => Form)
   declare forms: HasMany<typeof Form>;
 
-  @hasOne(() => Form, {
-    onQuery: (query) =>
-      query.where("is_first_form", true).preload("attributes"),
-  })
-  declare firstForm: HasOne<typeof Form>;
+  @belongsTo(() => Form)
+  declare registerForm: BelongsTo<typeof Form>;
 
   @hasMany(() => Attribute)
   declare attributes: HasMany<typeof Attribute>;

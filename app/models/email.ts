@@ -45,8 +45,8 @@ export default class Email extends BaseModel {
   declare form: BelongsTo<typeof Form>;
 
   @manyToMany(() => Participant, {
-    pivotTable: "participant_emails",
-    pivotColumns: ["send_at", "send_by", "status"],
+    pivotTable: "ParticipantEmails",
+    pivotColumns: ["sendAt", "sendBy", "status"],
   })
   declare participants: ManyToMany<typeof Participant>;
 
