@@ -1,3 +1,4 @@
+import string from "@adonisjs/core/helpers/string";
 import { CamelCaseNamingStrategy } from "@adonisjs/lucid/orm";
 import { LucidModel } from "@adonisjs/lucid/types/model";
 import { ModelRelations } from "@adonisjs/lucid/types/relations";
@@ -20,7 +21,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
     model: LucidModel,
     __: LucidModel,
   ): string {
-    return `${model.name.charAt(0).toLocaleLowerCase() + model.name.slice(1)}${model.primaryKey.charAt(0).toUpperCase() + model.primaryKey.slice(1)}`;
+    return string.camelCase(model.name + model.primaryKey);
   }
 
   relationForeignKey(
@@ -28,7 +29,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
     __: LucidModel,
     relatedModel: LucidModel,
   ): string {
-    return `${relatedModel.name.charAt(0).toLocaleLowerCase() + relatedModel.name.slice(1)}${relatedModel.primaryKey.charAt(0).toUpperCase() + relatedModel.primaryKey.slice(1)}`;
+    return string.camelCase(relatedModel.name + relatedModel.primaryKey);
   }
 
   relationPivotTable(
@@ -40,7 +41,7 @@ export default class PrismaNamingStrategy implements CamelCaseNamingStrategy {
   }
 
   relationPivotForeignKey(_: "manyToMany", model: LucidModel): string {
-    return `${model.name.charAt(0).toLocaleLowerCase() + model.name.slice(1)}${model.primaryKey.charAt(0).toUpperCase() + model.primaryKey.slice(1)}`;
+    return string.camelCase(model.name + model.primaryKey);
   }
 
   paginationMetaKeys(): {
