@@ -78,7 +78,7 @@ router
             router.resource("participants", ParticipantsController).apiOnly();
           })
           .prefix("events/:eventId")
-          .where("eventId", router.matchers.number());
+          .where("eventUuid", router.matchers.number());
       })
       .use(middleware.auth());
 

@@ -6,9 +6,14 @@ import {
   beforeCreate,
   belongsTo,
   column,
+  hasOne,
   manyToMany,
 } from "@adonisjs/lucid/orm";
-import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
+import type {
+  BelongsTo,
+  HasOne,
+  ManyToMany,
+} from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
 
@@ -16,13 +21,13 @@ import Attribute from "./attribute.js";
 
 export default class Form extends BaseModel {
   @column({ isPrimary: true })
-  declare id: number;
+  declare uuid: string;
 
   @column()
-  declare eventId: number;
+  declare eventUuid: string;
 
   @column()
-  declare isOpen: boolean;
+  declare isEditable: boolean;
 
   @column()
   declare description: string;
@@ -33,8 +38,15 @@ export default class Form extends BaseModel {
   @column()
   declare isFirstForm: boolean;
 
-  @column()
-  declare slug: string;
+  @column({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
+  declare openDate: DateTime;
+
+  @column({
+    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+  })
+  declare closeDate: DateTime;
 
   @column.dateTime({
     serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
@@ -58,15 +70,20 @@ export default class Form extends BaseModel {
   declare event: BelongsTo<typeof Event>;
 
   @manyToMany(() => Attribute, {
-    pivotTable: "form_definitions",
-    pivotColumns: ["is_editable", "is_required", "order"],
+    pivotTable: "FormDefinitions",
+    pivotColumns: ["isEditable", "isRequired", "order"],
     pivotTimestamps: true,
   })
   declare attributes: ManyToMany<typeof Attribute>;
 
+  @hasOne(() => Event, {
+    foreignKey: "firstFormUuid",
+  })
+  declare registerEvent: HasOne<typeof Event>;
+
   @beforeCreate()
-  static afterSlug(form: Form) {
-    form.slug = randomUUID();
+  static assignUuid(form: Form) {
+    form.uuid = randomUUID();
   }
 
   serializeExtras() {

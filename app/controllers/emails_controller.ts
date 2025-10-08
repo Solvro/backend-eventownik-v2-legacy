@@ -16,22 +16,22 @@ export default class EmailsController {
    * @operationId listEmails
    * @description Retrieve a list of emails for a specific event without content, along with their sending status.
    * @tag emails
-   * @responseBody 200 - [ { "id": 1, "eventId": 5, "name": "test124", "trigger": "participant_registered", "triggerValue": "", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "meta": { "failedCount": "1", "pendingCount": "1", "sentCount": "0" } } ]
+   * @responseBody 200 - [ { "uuid": 1, "eventId": 5, "name": "test124", "trigger": "participant_registered", "triggerValue": "", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "meta": { "failedCount": "1", "pendingCount": "1", "sentCount": "0" } } ]
    */
   async index({ params, bouncer }: HttpContext) {
     const eventId = Number(params.eventId);
     await bouncer.authorize("manage_email", await Event.findOrFail(eventId));
 
     const emails = await Email.query()
-      .where("event_id", eventId)
+      .where("eventUuid", eventId)
       .select([
-        "id",
+        "uuid",
         "name",
         "trigger",
-        "trigger_value",
-        "trigger_value_2",
-        "created_at",
-        "updated_at",
+        "triggerValue",
+        "triggerValue_2",
+        "createdAt",
+        "updatedAt",
       ])
       .withCount("participants", (q) =>
         q.where("status", "failed").as("failedCount"),
@@ -51,18 +51,18 @@ export default class EmailsController {
    * @operationId getEmail
    * @description Retrieve details of a specific email linked to an event.
    * @tag emails
-   * @responseBody 200 - { "id": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } }, { "id": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt":  "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } } ] }
+   * @responseBody 200 - { "uuid": 1, "eventId": 5, "name": "test124", "content": "uuuu", "trigger": "participant_registered", "triggerValue": "eeee", "triggerValue2": "", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt": "2025-02-22T19:13:10.471+00:00", "participants": [ { "uuid": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt": "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "failed", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } }, { "uuid": 4, "email": "dasd", "eventId": 5, "firstName": "fdf", "lastName": "fddfd", "createdAt":  "2025-02-22T19:13:10.471+00:00", "updatedAt":  "2025-02-22T19:13:10.471+00:00", "meta": { "pivot_status": "pending", "pivot_email_id": 1, "pivot_participant_id": 4, "pivot_send_at":  "2025-02-22T19:13:10.471+00:00", "pivot_send_by":  "2025-02-22T19:13:10.471+00:00" } } ] }
    * @responseBody 404 - {"message": "Email not found"}
    */
   async show({ params, bouncer }: HttpContext) {
-    const emailId = +params.id;
+    const emailId = +params.uuid;
     const event = await Event.findOrFail(params.eventId);
     await bouncer.authorize("manage_email", event);
 
     const email = Email.query()
       .preload("participants", (q) => q.pivotColumns(["status"]))
-      .where("id", emailId)
-      .where("event_id", event.id)
+      .where("uuid", emailId)
+      .where("eventUuid", event.uuid)
       .firstOrFail();
 
     return email;
@@ -74,7 +74,7 @@ export default class EmailsController {
    * @description Create a new email associated with a specific event.
    * @tag emails
    * @requestBody <emailsStoreValidator>
-   * @responseBody 201 - {"id": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
+   * @responseBody 201 - {"uuid": 1, "name": "Email Name", "content": "Email Content", "trigger": "participant_registered"}
    * @responseBody 400 - {"message": "Failed to create email"}
    */
   async store({ params, request, response, bouncer }: HttpContext) {
@@ -94,7 +94,7 @@ export default class EmailsController {
    * @description Update an existing email associated with a specific event and return the updated email.
    * @tag emails
    * @requestBody <emailsUpdateValidator>
-   * @responseBody 200 - {"id": 1, "name": "Updated Name", "content": "Updated Content", "trigger": "form_filled"}
+   * @responseBody 200 - {"uuid": 1, "name": "Updated Name", "content": "Updated Content", "trigger": "form_filled"}
    */
   async update({ params, request, bouncer }: HttpContext) {
     await bouncer.authorize(
@@ -103,7 +103,7 @@ export default class EmailsController {
     );
 
     const data = await request.validateUsing(emailsUpdateValidator);
-    const emailId = Number(params.id);
+    const emailId = Number(params.uuid);
     const email = await Email.findOrFail(emailId);
 
     await email.merge(data).save();
@@ -124,7 +124,7 @@ export default class EmailsController {
       await Event.findOrFail(params.eventId),
     );
 
-    const emailId = Number(params.id);
+    const emailId = Number(params.uuid);
     const email = await Email.findOrFail(emailId);
 
     await email.related("participants").detach();
@@ -147,12 +147,12 @@ export default class EmailsController {
     await bouncer.authorize("manage_email", event);
 
     const email = await Email.query()
-      .where("event_id", event.id)
-      .where("id", emailId)
+      .where("eventUuid", event.uuid)
+      .where("uuid", emailId)
       .firstOrFail();
     const participants = await Participant.query()
-      .whereIn("id", request.input("participants") as number[])
-      .where("event_id", event.id);
+      .whereIn("uuid", request.input("participants") as number[])
+      .where("eventUuid", event.uuid);
 
     for (const participant of participants) {
       await EmailService.sendToParticipant(
@@ -180,8 +180,8 @@ export default class EmailsController {
     await bouncer.authorize("manage_email", event);
 
     const email = await Email.query()
-      .where("event_id", event.id)
-      .where("id", emailId)
+      .where("eventUuid", event.uuid)
+      .where("uuid", emailId)
       .firstOrFail();
 
     const data = await request.validateUsing(emailDuplicateValidator);
@@ -190,9 +190,9 @@ export default class EmailsController {
     const emailData = {
       ...email.$original,
     };
-    delete emailData.id;
-    delete emailData.created_at;
-    delete emailData.updated_at;
+    delete emailData.uuid;
+    delete emailData.createdAt;
+    delete emailData.updatedAt;
 
     const newEmail = await event.related("emails").create({
       ...emailData,

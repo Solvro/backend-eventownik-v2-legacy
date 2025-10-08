@@ -25,11 +25,11 @@ export default class OrganizersController {
     const eventId = +context.params.eventId;
 
     return await Admin.query()
-      .select("id", "firstName", "lastName", "email")
+      .select("uuid", "firstName", "lastName", "email")
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("event_id", eventId),
       )
-      .whereHas("events", (query) => query.where("events.id", eventId));
+      .whereHas("events", (query) => query.where("events.uuid", eventId));
   }
 
   /**
@@ -57,11 +57,11 @@ export default class OrganizersController {
    */
   async show({ params }: HttpContext) {
     const eventId = +params.eventId;
-    const organizerId = +params.id;
+    const organizerId = +params.uuid;
 
     const organizer = await Admin.query()
-      .where("id", organizerId)
-      .whereHas("events", (query) => query.where("events.id", eventId))
+      .where("uuid", organizerId)
+      .whereHas("events", (query) => query.where("events.uuid", eventId))
       .preload("permissions", (permissionsQuery) =>
         permissionsQuery.where("event_id", eventId),
       )
@@ -81,7 +81,7 @@ export default class OrganizersController {
    */
   async update({ params, request }: HttpContext) {
     const eventId = +params.eventId;
-    const organizerId = +params.id;
+    const organizerId = +params.uuid;
 
     const { permissionsIds } =
       await updateOrganizerPermissionsValidator.validate(request.body());
@@ -104,12 +104,12 @@ export default class OrganizersController {
    */
   async destroy({ params }: HttpContext) {
     const eventId = +params.eventId;
-    const organizerId = +params.id;
+    const organizerId = +params.uuid;
 
     await db
-      .from("admin_permissions")
-      .where("admin_id", organizerId)
-      .where("event_id", eventId)
+      .from("adminPermissions")
+      .where("adminUuid", organizerId)
+      .where("eventUuid", eventId)
       .delete();
   }
 }

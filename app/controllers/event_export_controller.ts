@@ -29,13 +29,15 @@ export default class EventExportController {
    */
   public async handle({ params, response, request }: HttpContext) {
     const event = await Event.query()
-      .where("id", +params.eventId)
+      .where("uuid", +params.eventId)
       .preload("participants", async (participants) => {
         await participants.preload("attributes");
       })
       .firstOrFail();
 
-    const attributes = await this.attributeService.getEventAttributes(event.id);
+    const attributes = await this.attributeService.getEventAttributes(
+      event.uuid,
+    );
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Export");
@@ -45,7 +47,7 @@ export default class EventExportController {
     });
 
     sheet.columns = [
-      { header: "id", key: "participants_id" },
+      { header: "uuid", key: "participants_id" },
       { header: "email", key: "participants_email" },
       ...attributesColumns,
     ];
@@ -56,11 +58,11 @@ export default class EventExportController {
       (p1, p2) => p1.id - p2.id,
     ) as Participant[];
 
-    if (queryParams.ids !== undefined) {
+    if (queryParams.uuids !== undefined) {
       const participantsToFilter = (
-        typeof queryParams.ids === "string"
-          ? queryParams.ids.split(",")
-          : (queryParams.ids as string[])
+        typeof queryParams.uuids === "string"
+          ? queryParams.uuids.split(",")
+          : (queryParams.uuids as string[])
       )
         .filter((v) => v.trim() !== "")
         .map((v) => Number(v))
@@ -68,12 +70,12 @@ export default class EventExportController {
 
       sortedParticipants = sortedParticipants.filter(
         (participant) =>
-          participantsToFilter.findIndex((id) => id === participant.id) > -1,
+          participantsToFilter.findIndex((id) => id === participant.uuid) > -1,
       );
     }
 
-    sheet.getColumn("participants_id").values = ["ID"].concat(
-      sortedParticipants.map((participant) => participant.id.toString()),
+    sheet.getColumn("participants_id").values = ["uuid"].concat(
+      sortedParticipants.map((participant) => participant.uuid.toString()),
     );
     sheet.getColumn("participants_email").values = ["Email"].concat(
       sortedParticipants.map((participant) => participant.email),

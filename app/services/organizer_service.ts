@@ -31,12 +31,12 @@ export class OrganizerService {
 
   async getOrganizerWithPermissions(organizerId: number, eventId: number) {
     return await Admin.query()
-      .where("id", organizerId)
+      .where("uuid", organizerId)
       .whereHas("events", (eventsQuery) =>
-        eventsQuery.where("event_id", eventId),
+        eventsQuery.where("eventUuid", eventId),
       )
       .preload("permissions", (permissionsQuery) =>
-        permissionsQuery.where("event_id", eventId),
+        permissionsQuery.where("eventUuid", eventId),
       )
       .firstOrFail();
   }
@@ -53,7 +53,7 @@ export class OrganizerService {
 
     await organizer
       .related("permissions")
-      .detach(organizer.permissions.map((permission) => permission.id));
+      .detach(organizer.permissions.map((permission) => permission.uuid));
 
     newPermissionsIds.forEach(async (permissionId) => {
       await organizer
@@ -62,7 +62,7 @@ export class OrganizerService {
     });
 
     const updatedOrganizer = await Admin.query()
-      .where("id", organizerId)
+      .where("uuid", organizerId)
       .preload("permissions")
       .firstOrFail();
 

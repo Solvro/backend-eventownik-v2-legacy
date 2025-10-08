@@ -33,11 +33,10 @@ export default class AdminsController {
    */
   async store({ request, response }: HttpContext) {
     const newAdminData = await createAdminValidator.validate(request.body());
-
     const newAdmin = await this.adminService.createAdmin(newAdminData);
 
     return response
-      .header("Location", `/api/v1/admins/${newAdmin.id}`)
+      .header("Location", `/api/v1/admins/${newAdmin.uuid}`)
       .created();
   }
 
@@ -51,9 +50,10 @@ export default class AdminsController {
    */
   async show({ params }: HttpContext) {
     return await Admin.query()
-      .where("id", +params.id)
+      .where("uuid", String(params.id))
       .preload("events")
       .preload("permissions")
+
       .firstOrFail();
   }
 
@@ -67,15 +67,17 @@ export default class AdminsController {
    */
   async update({ params, request }: HttpContext) {
     const adminUpdates = await updateAdminValidator.validate(request.body());
-
+    // console.log(params.id);
     const admin = await Admin.findOrFail(params.id);
+
+    console.log(admin);
 
     if (adminUpdates === undefined) {
       return admin;
     }
 
     const updatedAdmin = await this.adminService.updateAdmin(
-      +params.id,
+      String(params.id),
       adminUpdates,
     );
 
@@ -90,7 +92,7 @@ export default class AdminsController {
    * @responseBody 204 - {}
    */
   async destroy({ params, response }: HttpContext) {
-    await this.adminService.deleteAdmin(+params.id);
+    await this.adminService.deleteAdmin(params.id);
     return response.noContent();
   }
 }
