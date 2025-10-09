@@ -26,6 +26,8 @@ server.use([
   () => import("#middleware/force_json_response_middleware"),
   () => import("@adonisjs/cors/cors_middleware"),
   () => import("@adonisjs/static/static_middleware"),
+  () => import("#middleware/open_telemetry_middleware"),
+  () => import("#middleware/otel_context_middleware"),
 ]);
 
 /**
