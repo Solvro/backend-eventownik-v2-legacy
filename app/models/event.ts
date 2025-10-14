@@ -18,6 +18,7 @@ import type {
 import Email from "#models/email";
 import Form from "#models/form";
 
+import { serializeWarsawIsoNoOffset } from "../utils/datetime.js";
 import Admin from "./admin.js";
 import Attribute from "./attribute.js";
 import Participant from "./participant.js";
@@ -40,12 +41,12 @@ export default class Event extends BaseModel {
   declare slug: string;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime) => serializeWarsawIsoNoOffset(value),
   })
   declare startDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime) => serializeWarsawIsoNoOffset(value),
   })
   declare endDate: DateTime;
 

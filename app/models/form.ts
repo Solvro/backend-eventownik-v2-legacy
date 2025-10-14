@@ -12,6 +12,7 @@ import type { BelongsTo, ManyToMany } from "@adonisjs/lucid/types/relations";
 
 import Event from "#models/event";
 
+import { serializeWarsawIsoNoOffset } from "../utils/datetime.js";
 import Attribute from "./attribute.js";
 
 export default class Form extends BaseModel {
@@ -37,14 +38,12 @@ export default class Form extends BaseModel {
   declare slug: string;
 
   @column.dateTime({
-    serialize: (value: DateTime) => value.toISO({ includeOffset: false }),
+    serialize: (value: DateTime) => serializeWarsawIsoNoOffset(value),
   })
   declare startDate: DateTime;
 
   @column.dateTime({
-    serialize: (value: DateTime | null) => {
-      return value !== null ? value.toISO({ includeOffset: false }) : value;
-    },
+    serialize: (value: DateTime | null) => serializeWarsawIsoNoOffset(value),
   })
   declare endDate: DateTime | null;
 

@@ -1,9 +1,12 @@
 import vine from "@vinejs/vine";
 import { FieldContext } from "@vinejs/vine/types";
-import { DateTime } from "luxon";
 
+//import {DateTime} from "luxon";
 import string from "@adonisjs/core/helpers/string";
 
+import { parseToUtc } from "../utils/datetime.js";
+
+/*
 function dateTimeTransform(value: Date): DateTime {
   const parsed = DateTime.fromISO(value.toISOString());
   if (!parsed.isValid) {
@@ -11,6 +14,7 @@ function dateTimeTransform(value: Date): DateTime {
   }
   return parsed;
 }
+*/
 
 const slugMinLength = vine.createRule(
   async (value, minLength: number, field: FieldContext) => {
@@ -46,8 +50,8 @@ export const createEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true })),
     // 2025-01-05 12:00:00
-    startDate: vine.date().transform(dateTimeTransform),
-    endDate: vine.date().transform(dateTimeTransform),
+    startDate: vine.date().transform(parseToUtc),
+    endDate: vine.date().transform(parseToUtc),
     lat: vine.number().nullable().optional(),
     location: vine.string().nullable().optional(),
     long: vine.number().nullable().optional(),
@@ -89,8 +93,8 @@ export const updateEventValidator = vine.compile(
       .use(slugMinLength(3))
       .transform((value) => string.slug(value, { lower: true }))
       .optional(),
-    startDate: vine.date().transform(dateTimeTransform).optional(),
-    endDate: vine.date().transform(dateTimeTransform).optional(),
+    startDate: vine.date().transform(parseToUtc).optional(),
+    endDate: vine.date().transform(parseToUtc).optional(),
     location: vine.string().nullable().optional(),
     contactEmail: vine.string().nullable().optional(),
     lat: vine.number().nullable().optional(),
@@ -119,7 +123,7 @@ export const updateEventValidator = vine.compile(
 
 export const displayEvents = vine.compile(
   vine.object({
-    from: vine.date().optional().transform(dateTimeTransform),
-    to: vine.date().optional().transform(dateTimeTransform),
+    from: vine.date().optional().transform(parseToUtc),
+    to: vine.date().optional().transform(parseToUtc),
   }),
 );
