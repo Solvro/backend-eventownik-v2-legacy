@@ -2,7 +2,7 @@ import vine from "@vinejs/vine";
 import { DateTime } from "luxon";
 
 function dateTimeTransform(value: Date): DateTime {
-  const parsed = DateTime.fromISO(value.toISOString());
+  const parsed = DateTime.fromISO(value.toISOString(), { zone: "utc" }).toUTC();
   if (!parsed.isValid) {
     throw new Error("Invalid date");
   }

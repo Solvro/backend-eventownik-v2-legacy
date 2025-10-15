@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import string from "@adonisjs/core/helpers/string";
 
 function dateTimeTransform(value: Date): DateTime {
-  const parsed = DateTime.fromISO(value.toISOString());
+  const parsed = DateTime.fromISO(value.toISOString(), { zone: "utc" }).toUTC();
   if (!parsed.isValid) {
     throw new Error("Invalid date");
   }
