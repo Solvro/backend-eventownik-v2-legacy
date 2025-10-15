@@ -142,7 +142,7 @@ export default class AuthController {
    * @operationId verifyCaptcha
    * @description Checks if token from frontend passes the checks from hCaptcha.
    * @tag auth
-   * @responseBody 200 - {"status":[ { "message:" "Passed check" }]}
+   * @responseBody 200 - {"status":[ { "message": "Passed check" }]}
    * @responseBody 401 - {"errors":[ { "message": "Failed check" }]}
    */
   async verifyCaptcha({ request, response }: HttpContext) {
