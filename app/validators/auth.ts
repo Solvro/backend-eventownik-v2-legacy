@@ -36,3 +36,9 @@ export const resetPasswordValidator = vine.compile(
     newPassword: vine.string().minLength(8),
   }),
 );
+
+export const captchaValidator = vine.compile(
+  vine.object({
+    token: vine.string(),
+  }),
+);

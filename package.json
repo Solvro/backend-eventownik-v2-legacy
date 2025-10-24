@@ -57,6 +57,7 @@
     "@vinejs/vine": "^2.1.0",
     "adonis-autoswagger": "^3.66.0",
     "exceljs": "^4.4.0",
+    "hcaptcha": "^0.2.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
     "pino-opentelemetry-transport": "^1.0.1",

@@ -125,6 +125,7 @@ router
           "sendPasswordResetToken",
         ]);
         router.post("resetPassword", [AuthController, "resetPassword"]);
+        router.post("verifyCaptcha", [AuthController, "verifyCaptcha"]);
       })
       .prefix("auth");
   })
