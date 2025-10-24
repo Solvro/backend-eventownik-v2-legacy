@@ -149,6 +149,7 @@ export default class AuthController {
     const { token } = await request.validateUsing(captchaValidator);
     const remoteIp = request.ip();
 
+    //przepisać na fetcha bo xd
     const verdict = await verify(env.get("HCAPTCHA_SECRET"), token, remoteIp);
 
     if (verdict.success) {
