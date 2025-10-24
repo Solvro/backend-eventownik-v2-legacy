@@ -1,3 +1,4 @@
+import { verify } from "hcaptcha";
 import { DateTime } from "luxon";
 import assert from "node:assert";
 import crypto from "node:crypto";
@@ -7,7 +8,9 @@ import mail from "@adonisjs/mail/services/main";
 
 import Admin from "#models/admin";
 import PasswordReset from "#models/password_reset";
+import env from "#start/env";
 import {
+  captchaValidator,
   loginValidator,
   registerAdminValidator,
   resetPasswordValidator,
@@ -132,5 +135,28 @@ export default class AuthController {
 
     passwordReset.used = true;
     await passwordReset.save();
+  }
+
+  /**
+   * @verifyCaptcha
+   * @operationId verifyCaptcha
+   * @description Checks if token from frontend passes the checks from hCaptcha.
+   * @tag auth
+   * @responseBody 200 - {"status":[ { "message": "Passed check" }]}
+   * @responseBody 401 - {"errors":[ { "message": "Failed check" }]}
+   */
+  async verifyCaptcha({ request, response }: HttpContext) {
+    const { token } = await request.validateUsing(captchaValidator);
+    const remoteIp = request.ip();
+
+    //przepisać na fetcha bo xd
+    const verdict = await verify(env.get("HCAPTCHA_SECRET"), token, remoteIp);
+
+    if (verdict.success) {
+      return { status: [{ message: "Passed check" }] };
+    } else {
+      response.safeStatus(401);
+      return { errors: [{ message: "Failed check" }] };
+    }
   }
 }

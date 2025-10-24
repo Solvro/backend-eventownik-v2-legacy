@@ -54,12 +54,15 @@
     "@opentelemetry/resources": "^2.0.1",
     "@opentelemetry/sdk-node": "^0.203.0",
     "@outloud/adonis-autoswagger": "^1.8.7",
+    "@types/proxy-addr": "^2.0.3",
     "@vinejs/vine": "^2.1.0",
     "adonis-autoswagger": "^3.66.0",
     "exceljs": "^4.4.0",
+    "hcaptcha": "^0.2.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.1",
     "pino-opentelemetry-transport": "^1.0.1",
+    "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.2.2"
   },
   "devDependencies": {
