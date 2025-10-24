@@ -69,56 +69,69 @@ export class EmailService {
   }
 
   static async parseContent(
-    event: Event,
+    event: Event | null,
     participant: Participant,
     email: Email,
     message: Message,
   ) {
-    const content = email.content;
-    const { form } = email;
-    let parsedContent = content
-      .replace(/\/event_name/g, event.name)
-      .replace(
-        /\/event_start_date/g,
-        event.startDate.toFormat("yyyy-MM-dd HH:mm"),
-      )
-      .replace(/\/event_end_date/g, event.endDate.toFormat("yyyy-MM-dd HH:mm"))
-      .replace(/\/event_slug/g, event.slug)
-      .replace(/\/event_primary_color/g, event.primaryColor ?? "")
-      .replace(/\/event_location/g, event.location ?? "")
-      .replace(/\/participant_id/g, String(participant.id))
-      .replace(
-        /\/participant_created_at/g,
-        participant.createdAt.toFormat("yyyy-MM-dd HH:mm"),
-      )
-      .replace(
-        /\/participant_updated_at/g,
-        participant.updatedAt.toFormat("yyyy-MM-dd HH:mm"),
-      )
-      .replace(/\/participant_email/g, participant.email)
-      .replace(/\/participant_slug/g, participant.slug)
-      .replace(
-        /data:image\/(\w+);base64,([^"]+)/g,
-        (_match, format, base64: string) => {
-          const cid = cuid();
-          message.nodeMailerMessage.attachments =
-            message.nodeMailerMessage.attachments ?? [];
-          message.nodeMailerMessage.attachments.push({
-            content: Buffer.from(base64, "base64"),
-            encoding: "base64",
-            filename: `${cid}.${format}`,
-            cid,
-          });
-          return `cid:${cid}`;
-        },
-      );
-
-    if (form !== null) {
-      parsedContent = parsedContent.replace(
-        /\/form_url/g,
-        `${env.get("APP_DOMAIN")}/${event.slug}/${form.slug}/${participant.slug}`,
-      );
+    if (event === null) {
+      return email.content;
     }
+
+    await event.load("forms");
+
+    let parsedContent = email.content;
+
+    const tagRegex = /<span[^>]*data-id="([^"]+)"[^>]*>.*?<\/span>/g;
+
+    parsedContent = parsedContent.replace(
+      tagRegex,
+      (_match, dataId: string) => {
+        switch (dataId) {
+          case "/event_name":
+            return event.name;
+          case "/event_start_date":
+            return event.startDate.toFormat("yyyy-MM-dd HH:mm");
+          case "/event_end_date":
+            return event.endDate.toFormat("yyyy-MM-dd HH:mm");
+          case "/event_slug":
+            return event.slug;
+          case "/event_primary_color":
+            return event.primaryColor ?? "";
+          case "/event_location":
+            return event.location ?? "";
+          case "/participant_id":
+            return String(participant.id);
+          case "/participant_created_at":
+            return participant.createdAt.toFormat("yyyy-MM-dd HH:mm");
+          case "/participant_updated_at":
+            return participant.updatedAt.toFormat("yyyy-MM-dd HH:mm");
+          case "/participant_email":
+            return participant.email;
+          case "/participant_slug":
+            return participant.slug;
+          default:
+            return dataId;
+        }
+      },
+    );
+
+    parsedContent = parsedContent.replace(
+      /data:image\/(\w+);base64,([^"]+)/g,
+      (_match, format, base64: string) => {
+        const cid = cuid();
+        message.nodeMailerMessage.attachments =
+          message.nodeMailerMessage.attachments ?? [];
+        message.nodeMailerMessage.attachments.push({
+          content: Buffer.from(base64, "base64"),
+          encoding: "base64",
+          filename: `${cid}.${format}`,
+          cid,
+          contentType: `image/${format}`,
+        });
+        return `cid:${cid}`;
+      },
+    );
 
     for (const attribute of participant.attributes) {
       if (attribute.type === "block") {
@@ -129,6 +142,17 @@ export class EmailService {
       parsedContent = parsedContent.replace(
         new RegExp(`/participant_${attribute.slug}`, "g"),
         attribute.$extras.pivot_value as string,
+      );
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    for (const [, form] of (event.forms ?? []).entries()) {
+      const formUrl = `${env.get("APP_DOMAIN")}/${event.slug}/${form.slug}/${participant.slug}`;
+      const formRegex = new RegExp(`/form_${form.slug}`, "g");
+      parsedContent = parsedContent.replace(
+        formRegex,
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        `<a href="${formUrl}">${form.name ?? "Formularz"}</a>`,
       );
     }
 
