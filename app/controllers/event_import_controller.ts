@@ -1,87 +1,117 @@
-import ExcelJS from "exceljs";
-
 import type { HttpContext } from "@adonisjs/core/http";
 
 import Event from "#models/event";
 import Participant from "#models/participant";
+import { ParticipantService } from "#services/participant_service";
+import { participantsImportValidator } from "#validators/participants";
 
-interface ParticipantData {
-  id: number;
+interface SkippedParticipant {
   email: string;
+  reason: "already_exists" | "duplicate_in_file" | "failed";
+  message: string;
 }
 
 export default class EventImportController {
+  private participantService = new ParticipantService();
+
   /**
    * @handle
    * @summary Import participants
-   * @operationId importEventSpreadsheet
-   * @description Takes given spreadsheet and updates event with :eventId with provided values
+   * @operationId importEventParticipants
+   * @description Bulk creates participants for :eventId. Existing emails are skipped and returned as warnings.
    * @tag participants
-   * @paramPath eventId - ID of the event to be imported - @type(number) @required
-   * @requestFormDataBody {"spreadsheet":{"type":"file:xlsx","format":"binary"}}
-   * @responseBody 200 - {"eventId":"<number>","importedParticipants":"<Participant[]>"}
-   * @responseBody 400 - {"errors":[{ "message": "Bad file provided" }]}
-   * @responseBody 404 - { message: "Row not found", "name": "Exception", status: 404},
-   * @responseBody 500 - {"errors":[{ "message": "Could not process file" }]}
+   * @paramPath eventId - ID of the event to import participants into - @type(number) @required
+   * @requestBody {"participants":[{"email":"anna@example.com","participantAttributes":[{"attributeId":1,"value":"VIP"}]}]}
+   * @responseBody 200 - {"eventId":"<number>","importedParticipants":"<Participant[]>","skippedParticipants":"<{ email: string; reason: string; message: string }[]>"}
+   * @responseBody 409 - {"message":"Nie zaimportowano żadnych uczestników.","skippedParticipants":"<{ email: string; reason: string; message: string }[]>"}
    */
   public async handle({ params, request, response, bouncer }: HttpContext) {
-    const event = await Event.findOrFail(params.eventId);
+    const eventId = +params.eventId;
+    const event = await Event.findOrFail(eventId);
 
     await bouncer.authorize("manage_participant", event);
 
-    const spreadsheetFile = request.file("spreadsheet");
+    const { participants } = await request.validateUsing(
+      participantsImportValidator,
+    );
+    const normalizedParticipants = participants.map((participant) => ({
+      ...participant,
+      email: participant.email.trim().toLowerCase(),
+    }));
+    const emails = normalizedParticipants.map(
+      (participant) => participant.email,
+    );
 
-    if (spreadsheetFile?.tmpPath === undefined) {
-      return response.internalServerError({
-        errors: [{ message: "Could not process file" }],
-      });
-    }
+    const existingParticipants = await Participant.query()
+      .where("event_id", eventId)
+      .whereIn("email", [...new Set(emails)])
+      .select("email");
+    const existingEmails = new Set(
+      existingParticipants.map((participant) =>
+        participant.email.trim().toLowerCase(),
+      ),
+    );
+    const importedParticipants: Participant[] = [];
+    const skippedParticipants: SkippedParticipant[] = [];
+    const seenEmails = new Set<string>();
 
-    const workbook = new ExcelJS.Workbook();
+    for (const participant of normalizedParticipants) {
+      if (existingEmails.has(participant.email)) {
+        skippedParticipants.push({
+          email: participant.email,
+          reason: "already_exists",
+          message: "Uczestnik z tym adresem email już istnieje.",
+        });
+        continue;
+      }
 
-    await workbook.xlsx.readFile(spreadsheetFile.tmpPath);
+      if (seenEmails.has(participant.email)) {
+        skippedParticipants.push({
+          email: participant.email,
+          reason: "duplicate_in_file",
+          message: "Ten adres email występuje w pliku więcej niż raz.",
+        });
+        continue;
+      }
 
-    const sheet = workbook.getWorksheet(1);
+      seenEmails.add(participant.email);
 
-    if (sheet === undefined) {
-      return response.badRequest({
-        errors: [{ message: "Bad file provided" }],
-      });
-    }
-
-    const id = sheet.getColumn("A");
-
-    const participantsData: ParticipantData[] = [];
-
-    id.eachCell((cell, rowNumber) => {
-      if (cell.value !== null && cell.value !== undefined) {
-        const participantId = +cell.value;
-        const email = sheet.getCell(`B${rowNumber}`).toString();
-
-        participantsData.push({
-          id: participantId,
-          email,
+      try {
+        const importedParticipant =
+          await this.participantService.createParticipant(eventId, participant);
+        importedParticipants.push(importedParticipant);
+      } catch (error) {
+        skippedParticipants.push({
+          email: participant.email,
+          reason: "failed",
+          message:
+            error instanceof Error
+              ? error.message
+              : "Nie udało się zaimportować uczestnika.",
         });
       }
-    });
-
-    const importedParticipants = [];
-
-    for (const data of participantsData) {
-      const participant = await Participant.updateOrCreate(
-        { id: data.id },
-        {
-          eventId: +params.eventId,
-          email: data.email,
-        },
-      );
-
-      importedParticipants.push(participant);
     }
 
-    return {
-      eventId: +params.eventId,
+    if (importedParticipants.length === 0) {
+      return response.conflict({
+        message: "Nie zaimportowano żadnych uczestników.",
+        skippedParticipants,
+      });
+    }
+
+    return response.ok({
+      eventId,
       importedParticipants,
-    };
+      skippedParticipants,
+      warning:
+        skippedParticipants.length > 0
+          ? {
+              message: "Część uczestników nie została zaimportowana.",
+              emails: skippedParticipants.map(
+                (participant) => participant.email,
+              ),
+            }
+          : null,
+    });
   }
 }
