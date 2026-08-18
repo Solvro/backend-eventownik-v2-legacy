@@ -1,5 +1,35 @@
 import vine from "@vinejs/vine";
 
+function participantAttributeValue() {
+  return vine.any().transform((value, field) => {
+    if (value === null || value === undefined) {
+      return null;
+    }
+    if (typeof value === "string") {
+      return value;
+    }
+    if (typeof value === "number") {
+      return String(value);
+    }
+    if (
+      Array.isArray(value) &&
+      value.every((v) => typeof v === "string" || typeof v === "number")
+    ) {
+      return value.map((v) => String(v));
+    }
+    field.report(
+      "Value must be a string, number, null, or an array of these",
+      "value",
+      field,
+    );
+  });
+}
+
+const participantAttributePayload = vine.object({
+  attributeId: vine.number(),
+  value: participantAttributeValue(),
+});
+
 export const participantsStoreValidator = vine.compile(
   vine.object({
     email: vine
@@ -15,35 +45,22 @@ export const participantsStoreValidator = vine.compile(
 
         return participantEmail === null;
       }),
-    participantAttributes: vine
+    participantAttributes: vine.array(participantAttributePayload).optional(),
+  }),
+);
+
+export const participantsImportValidator = vine.compile(
+  vine.object({
+    participants: vine
       .array(
         vine.object({
-          attributeId: vine.number(),
-          value: vine.any().transform((value, field) => {
-            if (value === null || value === undefined) {
-              return null;
-            }
-            if (typeof value === "string") {
-              return value;
-            }
-            if (typeof value === "number") {
-              return String(value);
-            }
-            if (
-              Array.isArray(value) &&
-              value.every((v) => typeof v === "string" || typeof v === "number")
-            ) {
-              return value.map((v) => String(v));
-            }
-            field.report(
-              "Value must be a string, number, null, or an array of these",
-              "value",
-              field,
-            );
-          }),
+          email: vine.string().email(),
+          participantAttributes: vine
+            .array(participantAttributePayload)
+            .optional(),
         }),
       )
-      .optional(),
+      .minLength(1),
   }),
 );
 
@@ -71,34 +88,7 @@ export const participantsUpdateValidator = vine.compile(
       .array(
         vine.object({
           attributeId: vine.number(),
-          value: vine
-            .any()
-            .transform((value, field) => {
-              if (value === null || value === undefined) {
-                return null;
-              }
-              if (typeof value === "string") {
-                return value;
-              }
-              if (typeof value === "number") {
-                return String(value);
-              }
-              if (
-                Array.isArray(value) &&
-                value.every(
-                  (v) => typeof v === "string" || typeof v === "number",
-                )
-              ) {
-                return value.map((v) => String(v));
-              }
-              field.report(
-                "Value must be a string, number, null, or an array of these",
-                "value",
-                field,
-              );
-            })
-            .optional()
-            .nullable(),
+          value: participantAttributeValue().optional().nullable(),
         }),
       )
       .optional(),
